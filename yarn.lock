@@ -4157,7 +4157,7 @@ growl@1.10.5:
 
 "gwei-slim-nft-contracts@https://github.com/iainnash/gwei-slim-erc721":
   version "1.0.0"
-  resolved "https://github.com/iainnash/gwei-slim-erc721#46915a3d46d28a6be22a7b7b03f05d523ae32406"
+  resolved "https://github.com/iainnash/gwei-slim-erc721#bbcefae91b87b64b760b9e3daa7957b43ff877c5"
   dependencies:
     "@openzeppelin/contracts-upgradeable" "^4.3.2"
 

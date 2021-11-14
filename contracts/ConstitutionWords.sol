@@ -1,21 +1,21 @@
 // SPDX-License-Identifier: GPL-3.0
 pragma solidity 0.8.9;
 
-import {ERC721Base, ConfigSettings} from "gwei-slim-nft-contracts/contracts/base/ERC721Base.sol";
-import {DelegatedNFTLogic} from "gwei-slim-nft-contracts/contracts/base/DelegatedNFTLogic.sol";
+import {IBaseERC721Interface, ConfigSettings} from "gwei-slim-nft-contracts/contracts/base/ERC721Base.sol";
+import {ERC721Delegated} from "gwei-slim-nft-contracts/contracts/base/ERC721Delegated.sol";
 
 import {CountersUpgradeable} from "@openzeppelin/contracts-upgradeable/utils/CountersUpgradeable.sol";
 
 
 /// This custom NFT contract stores additional metadata to use for tokenURI
-contract ConstitutionWords is DelegatedNFTLogic {
+contract ConstitutionWords is ERC721Delegated {
     uint256 public currentTokenId;
     mapping(uint256 => string) metadataJson;
 
     constructor(
-        ERC721Base baseFactory
+        IBaseERC721Interface baseFactory
     )
-        DelegatedNFTLogic(
+        ERC721Delegated(
             baseFactory,
             "Constitution Words",
             "CONST",
