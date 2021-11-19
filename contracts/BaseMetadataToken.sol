@@ -8,7 +8,7 @@ import {CountersUpgradeable} from "@openzeppelin/contracts-upgradeable/utils/Cou
 
 
 /// This custom NFT contract stores additional metadata to use for tokenURI
-contract ConstitutionWords is ERC721Delegated {
+contract BaseMetadataToken is ERC721Delegated {
     uint256 public currentTokenId;
     mapping(uint256 => string) metadataJson;
 
