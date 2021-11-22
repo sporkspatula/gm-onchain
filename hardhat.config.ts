@@ -25,7 +25,7 @@ const config: HardhatUserConfig = {
     deployer: 0,
     erc721base: {
       // this is the erc721base logic contract deployment
-      // 1: '',
+      1: '0x43955024b1985E2b933A59021500aE5f55b04091',
       // this is the erc721base logic contract deployment
       4: '0x1aB9a6c7CE8e827CD47890e2f5CBefDC57d117aE',
     }
