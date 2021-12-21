@@ -13,7 +13,7 @@ contract BaseMetadataToken is ERC721Delegated {
     mapping(uint256 => string) metadataJson;
 
     constructor(
-        IBaseERC721Interface baseFactory
+        address baseFactory
     )
         ERC721Delegated(
             baseFactory,

@@ -4155,9 +4155,10 @@ growl@1.10.5:
   resolved "https://registry.yarnpkg.com/growl/-/growl-1.10.5.tgz#f2735dc2283674fa67478b10181059355c369e5e"
   integrity sha512-qBr4OuELkhPenW6goKVXiv47US3clb3/IbuWF9KNKEijAy9oeHxU9IgzjvJhHkUzhaj7rOUD7+YGWqUjLp5oSA==
 
-"gwei-slim-nft-contracts@https://github.com/iainnash/gwei-slim-erc721":
-  version "1.0.0"
-  resolved "https://github.com/iainnash/gwei-slim-erc721#bbcefae91b87b64b760b9e3daa7957b43ff877c5"
+gwei-slim-nft-contracts@^1.0.3:
+  version "1.0.3"
+  resolved "https://registry.yarnpkg.com/gwei-slim-nft-contracts/-/gwei-slim-nft-contracts-1.0.3.tgz#ff0ef23afb52a9121f5f42bea57a3c841ddecca3"
+  integrity sha512-FbUz95/EL80TOhhceenOrvgC7vMk2c72lGnZRLHBmVhGV2NaPrHO5ZiwLSoKzOev1fMZJ8KKVwKanMW5XAHx+w==
   dependencies:
     "@openzeppelin/contracts-upgradeable" "^4.3.2"
 

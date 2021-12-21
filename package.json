@@ -34,7 +34,7 @@
     "@openzeppelin/contracts-upgradeable": "^4.3.2",
     "@typechain/ethers-v5": "^7.0.1",
     "@typechain/hardhat": "^2.3.0",
-    "gwei-slim-nft-contracts": "https://github.com/iainnash/gwei-slim-erc721",
+    "gwei-slim-nft-contracts": "^1.0.3",
     "hardhat-deploy": "^0.8.11",
     "typechain": "^5.1.2"
   }
