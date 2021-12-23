@@ -5,20 +5,24 @@ import {IBaseERC721Interface, ConfigSettings} from "gwei-slim-nft-contracts/cont
 import {ERC721Delegated} from "gwei-slim-nft-contracts/contracts/base/ERC721Delegated.sol";
 
 import {CountersUpgradeable} from "@openzeppelin/contracts-upgradeable/utils/CountersUpgradeable.sol";
-
+import {GmRenderer} from './GmRenderer.sol';
 
 /// This custom NFT contract stores additional metadata to use for tokenURI
-contract BaseMetadataToken is ERC721Delegated {
+contract Gm is ERC721Delegated {
     uint256 public currentTokenId;
-    mapping(uint256 => string) metadataJson;
+    uint256 public maxSupply;
+    GmRenderer public renderer;
+    mapping(uint256 => bytes32) mintSeeds;
 
     constructor(
-        address baseFactory
+        address baseFactory,
+        address _rendererAddress,
+        uint256 _maxSupply
     )
         ERC721Delegated(
             baseFactory,
-            "Constitution Words",
-            "CONST",
+            "gm",
+            "gm",
             ConfigSettings({
                 royaltyBps: 1000,
                 uriBase: "",
@@ -26,19 +30,24 @@ contract BaseMetadataToken is ERC721Delegated {
                 hasTransferHook: false
             })
         )
-    {}
+    {
+        renderer = GmRenderer(_rendererAddress);
+        maxSupply = _maxSupply;
+    }
 
-    function mint(string memory nftMetadata) public {
-        metadataJson[currentTokenId] = nftMetadata;
+    function mint(bytes32 seed) public {
+        require(currentTokenId < maxSupply, "gm, mint is sold out");
+        mintSeeds[currentTokenId] = seed;
         _mint(msg.sender, currentTokenId++);
     }
 
     function burn(uint256 tokenId) public {
         _burn(tokenId);
-        metadataJson[tokenId] = "";
     }
 
     function tokenURI(uint256 tokenId) external view returns (string memory) {
-        return metadataJson[tokenId];
+        bytes32 seed = mintSeeds[tokenId];
+        return renderer.tokenURI(tokenId, seed);
     }
+
 }
