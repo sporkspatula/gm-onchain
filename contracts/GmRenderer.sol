@@ -10,6 +10,7 @@ interface ICorruptionsFont {
 
 contract GmRenderer {
     ICorruptionsFont private immutable font;
+    bytes16 private constant _HEX_SYMBOLS = "0123456789abcdef";
 
     constructor(address fontAddress) {
         font = ICorruptionsFont(fontAddress);
@@ -198,11 +199,11 @@ contract GmRenderer {
             return
                 "&#x000A0;$$$$$$\\&#x000A0;&#x000A0;$$$$$$$$$$&#x000A0;&#x000A0;";
         }
-        if (line == 44) {
+        if (line == 45) {
             return
                 "$$&#x000A0;&#x000A0;__$$\\&#x000A0;$$&#x000A0;&#x000A0;_$$&#x000A0;&#x000A0;_$$\\ ";
         }
-        if (line == 45) {
+        if (line == 46) {
             return
                 "$$&#x000A0;/&#x000A0;&#x000A0;$$&#x000A0;|$$&#x000A0;/&#x000A0;$$&#x000A0;/&#x000A0;$$&#x000A0;|";
         }
@@ -302,7 +303,7 @@ contract GmRenderer {
         bytes memory inner;
 
         if (mod == 0) {
-            inner = generateLinesFromRange(43, 51);
+            inner = generateLinesFromRange(44, 51);
         } else if (mod == 1) {
             inner = generateLinesFromIds(asterisk);
         } else if (mod == 2) {
@@ -322,6 +323,18 @@ contract GmRenderer {
             );
     }
 
+    function toHtmlHexString(uint256 value) internal pure returns (string memory) {
+        bytes memory buffer = new bytes(7);
+        buffer[0] = "#";
+        for (uint256 i = 6; i > 0; --i) {
+            buffer[i] = _HEX_SYMBOLS[value & 0xf];
+            value >>= 4;
+        }
+
+        require(value == 0, "Strings: hex length insufficient");
+        return string(buffer);
+    }
+
     function svgPreambleString(bytes3 backgroundColor, bytes3 fontColor)
         private
         view
@@ -333,13 +346,13 @@ contract GmRenderer {
                 '<style> @font-face { font-family: CorruptionsFont; src: url("',
                 font.font(),
                 '") format("opentype"); } ',
-                ".base{fill:#",
-                Strings.toHexString(uint256(uint24(fontColor))),
+                ".base{fill:",
+                toHtmlHexString(uint256(uint24(fontColor))),
                 ";font-family:CorruptionsFont;font-size: 10px;} ",
                 "</style>",
                 '<g transform="scale(4 4)">',
-                '<rect width="195" height="145" fill="#',
-                Strings.toHexString(uint256(uint24(backgroundColor))),
+                '<rect width="195" height="145" fill="',
+                toHtmlHexString(uint256(uint24(backgroundColor))),
                 '" /> '
             );
     }
@@ -369,13 +382,13 @@ contract GmRenderer {
         returns (bytes memory)
     {
         bytes memory out;
-        for (uint16 i = start; i < end; i++) {
+        for (uint16 i = 0; i < end-start; i++) {
             out = abi.encodePacked(
                 out,
                 "<text x='20' y='",
                 Strings.toString(40 + i * 10),
                 "' class='base'>",
-                getLine(i),
+                getLine(start + i),
                 "</text>"
             );
         }
