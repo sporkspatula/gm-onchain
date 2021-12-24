@@ -1,307 +1,423 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.9;
 
-import "@openzeppelin/contracts/access/Ownable.sol";
+import {Strings} from "@openzeppelin/contracts/utils/Strings.sol";
 import {Base64} from "base64-sol/base64.sol";
-import "./DynamicBuffer.sol";
-import "./EssentialStrings.sol";
-import {BytesLib} from "solidity-bytes-utils/contracts/BytesLib.sol";
 
 interface ICorruptionsFont {
     function font() external view returns (string memory);
 }
 
-contract GmRenderer is Ownable {
-    using DynamicBuffer for bytes;
-    using EssentialStrings for uint256;
-    using EssentialStrings for uint24;
-    using EssentialStrings for uint8;
-
-    ICorruptionsFont private font;
+contract GmRenderer {
+    ICorruptionsFont private immutable font;
 
     constructor(address fontAddress) {
         font = ICorruptionsFont(fontAddress);
     }
 
+    function getLine(uint16 line) internal pure returns (bytes memory) {
+        if (line == 0) {
+            return
+                "&#x000A0;&#x000A0;&#x000A0;&#x000A0;_/_/_&#x000A0;&#x000A0;&#x000A0;_/_/_/&#x000A0;&#x000A0;&#x000A0;_/_/ ";
+        }
+        if (line == 1) {
+            return
+                "&#x000A0;_/&#x000A0;&#x000A0;&#x000A0;&#x000A0;_/&#x000A0;&#x000A0;_/&#x000A0;&#x000A0;&#x000A0;&#x000A0;_/&#x000A0;&#x000A0;&#x000A0;&#x000A0;_/ ";
+        }
+        if (line == 2) {
+            return "";
+        }
+        if (line == 3) {
+            return
+                "&#x000A0;_/_/_/&#x000A0;&#x000A0;_/&#x000A0;&#x000A0;&#x000A0;&#x000A0;_/&#x000A0;&#x000A0;&#x000A0;&#x000A0;_/";
+            // skip //"&#x000A0;_/_/_/&#x000A0;&#x000A0;_/&#x000A0;&#x000A0;&#x000A0;&#x000A0;_/&#x000A0;&#x000A0;&#x000A0;&#x000A0;_/";
+            // skip //"&#x000A0;_/_/_/&#x000A0;&#x000A0;_/&#x000A0;&#x000A0;&#x000A0;&#x000A0;_/&#x000A0;&#x000A0;&#x000A0;&#x000A0;_/";
+        }
+        if (line == 4) {
+            return "&#x000A0;&#x000A0;&#x000A0;&#x000A0;_/";
+        }
+        if (line == 5) {
+            return "&#x000A0;_/_/";
+
+            // svgRaw
+        }
+        if (line == 6) {
+            return
+                "&#x000A0;&#x000A0;&#x000A0;&#x000A0;&#x000A0;&#x000A0;&#x000A0;&#x000A0;^-.&#x000A0;(``-')";
+        }
+        if (line == 7) {
+            return
+                "&#x000A0;&#x000A0;.-^&#x000A0;&#x000A0;&#x000A0;&#x000A0;&#x000A0;&#x000A0;\\(OO )_";
+        }
+        if (line == 8) {
+            return "&#x000A0;&#x000A0;,---(``-'),--./&#x000A0;&#x000A0;,-.)";
+        }
+        if (line == 9) {
+            return
+                "&#x000A0;'&#x000A0;&#x000A0;.-(OO )|&#x000A0;&#x000A0;&#x000A0;\\/&#x000A0;&#x000A0;&#x000A0;|";
+        }
+        if (line == 10) {
+            return
+                "|&#x000A0;&#x000A0;|&#x000A0;.-,&#x000A0;\\|&#x000A0;&#x000A0;|\\/|&#x000A0;&#x000A0;|";
+        }
+        if (line == 11) {
+            return
+                "|&#x000A0;&#x000A0;|&#x000A0;.-,_/|&#x000A0;&#x000A0;|&#x000A0;&#x000A0;|&#x000A0;&#x000A0;|";
+        }
+        if (line == 12) {
+            return
+                "|&#x000A0;&#x000A0;``--'&#x000A0;|&#x000A0;|&#x000A0;&#x000A0;|&#x000A0;&#x000A0;|&#x000A0;&#x000A0;| ";
+        }
+        if (line == 13) {
+            return
+                "&#x000A0;`------'&#x000A0;&#x000A0;`--'&#x000A0;&#x000A0;&#x000A0;`--'";
+
+            // svg devil
+        }
+        if (line == 14) {
+            return
+                "&#x000A0;&#x000A0;&#x000A0;&#x000A0;&#x000A0;&#x000A0;&#x000A0;&#x000A0;^-.&#x000A0;(``-')";
+        }
+        if (line == 15) {
+            return
+                "&#x000A0;&#x000A0;.-^&#x000A0;&#x000A0;&#x000A0;&#x000A0;&#x000A0;&#x000A0;\\(OO )_";
+        }
+        if (line == 16) {
+            return "&#x000A0;&#x000A0;,---(``-'),--./&#x000A0;&#x000A0;,-.)";
+        }
+        if (line == 17) {
+            return
+                "&#x000A0;'&#x000A0;&#x000A0;.-(OO )|&#x000A0;&#x000A0;&#x000A0;\\/&#x000A0;&#x000A0;&#x000A0;|";
+        }
+        if (line == 18) {
+            return
+                "|&#x000A0;&#x000A0;|&#x000A0;.-,&#x000A0;\\|&#x000A0;&#x000A0;|\\/|&#x000A0;&#x000A0;|";
+        }
+        if (line == 19) {
+            return
+                "|&#x000A0;&#x000A0;|&#x000A0;.-,_/|&#x000A0;&#x000A0;|&#x000A0;&#x000A0;|&#x000A0;&#x000A0;|";
+        }
+        if (line == 20) {
+            return
+                "|&#x000A0;&#x000A0;``--'&#x000A0;|&#x000A0;|&#x000A0;&#x000A0;|&#x000A0;&#x000A0;|&#x000A0;&#x000A0;| ";
+        }
+        if (line == 21) {
+            return
+                "&#x000A0;`------'&#x000A0;&#x000A0;`--'&#x000A0;&#x000A0;&#x000A0;`--'";
+
+            //  svg script
+        }
+        if (line == 22) {
+            return
+                "gggg,gg&#x000A0;&#x000A0;&#x000A0;&#x000A0;&#x000A0;,ggg,,ggg,,ggg,";
+        }
+        if (line == 23) {
+            return
+                'dP"&#x000A0;"Y8I&#x000A0;&#x000A0;&#x000A0;8"&#x000A0;&#x000A0;\'8P"&#x000A0;"8P"&#x000A0;"8,';
+        }
+        if (line == 24) {
+            return
+                'i8\'&#x000A0;&#x000A0;&#x000A0;8I&#x000A0;&#x000A0;I8&#x000A0;&#x000A0;&#x000A0;8I"&#x000A0;"8I&#x000A0;&#x000A0;8I ';
+        }
+        if (line == 25) {
+            return
+                'd8,&#x000A0;&#x000A0;d8I&#x000A0;&#x000A0;dP&#x000A0;&#x000A0;&#x000A0;8I"&#x000A0;"8I&#x000A0;&#x000A0;Yb,';
+        }
+        if (line == 26) {
+            return
+                'PY8888P\'888P&#x000A0;&#x000A0;&#x000A0;8I"&#x000A0;"8I&#x000A0;&#x000A0;"Y8 ';
+        }
+        if (line == 27) {
+            return ",d8I'";
+        }
+        if (line == 28) {
+            return ",dP'8I";
+        }
+        if (line == 29) {
+            return ',8"&#x000A0;&#x000A0;8I';
+        }
+        if (line == 30) {
+            return "I8&#x000A0;&#x000A0;8I ";
+        }
+        if (line == 31) {
+            return "`8,&#x000A0;&#x000A0;8I ";
+        }
+        if (line == 32) {
+            return '"`Y8P"';
+
+            // svgAstrisk
+        }
+        if (line == 33) {
+            return
+                "&#x000A0;&#x000A0;&#x000A0;&#x000A0;****&#x000A0;&#x000A0;&#x000A0;&#x000A0;&#x000A0;&#x000A0;***&#x000A0;****&#x000A0;**** ";
+        }
+        if (line == 34) {
+            return
+                "&#x000A0;&#x000A0;&#x000A0;*&#x000A0;&#x000A0;***&#x000A0;&#x000A0;*&#x000A0;&#x000A0;&#x000A0;***&#x000A0;****&#x000A0;***&#x000A0;&#x000A0;*";
+        }
+        if (line == 35) {
+            return
+                "&#x000A0;&#x000A0;*&#x000A0;&#x000A0;&#x000A0;****&#x000A0;&#x000A0;&#x000A0;&#x000A0;&#x000A0;**&#x000A0;&#x000A0;****&#x000A0;****";
+        }
+        if (line == 36) {
+            return
+                "&#x000A0;**&#x000A0;&#x000A0;&#x000A0;&#x000A0;**&#x000A0;&#x000A0;&#x000A0;&#x000A0;&#x000A0;&#x000A0;**&#x000A0;&#x000A0;&#x000A0;**&#x000A0;&#x000A0;&#x000A0;** ";
+        }
+        if (line == 37) {
+            return
+                "&#x000A0;**&#x000A0;&#x000A0;&#x000A0;&#x000A0;&#x000A0;**&#x000A0;&#x000A0;&#x000A0;&#x000A0;&#x000A0;&#x000A0;**&#x000A0;&#x000A0;&#x000A0;**&#x000A0;&#x000A0;&#x000A0;** ";
+            // "&#x000A0;**&#x000A0;&#x000A0;&#x000A0;&#x000A0;&#x000A0;**&#x000A0;&#x000A0;&#x000A0;&#x000A0;&#x000A0;&#x000A0;**&#x000A0;&#x000A0;&#x000A0;**&#x000A0;&#x000A0;&#x000A0;** ";
+            // "&#x000A0;**&#x000A0;&#x000A0;&#x000A0;&#x000A0;&#x000A0;**&#x000A0;&#x000A0;&#x000A0;&#x000A0;&#x000A0;&#x000A0;**&#x000A0;&#x000A0;&#x000A0;**&#x000A0;&#x000A0;&#x000A0;** ";
+            // "&#x000A0;**&#x000A0;&#x000A0;&#x000A0;&#x000A0;&#x000A0;**&#x000A0;&#x000A0;&#x000A0;&#x000A0;&#x000A0;&#x000A0;**&#x000A0;&#x000A0;&#x000A0;**&#x000A0;&#x000A0;&#x000A0;** ";
+        }
+        if (line == 38) {
+            return
+                "&#x000A0;&#x000A0;********&#x000A0;&#x000A0;&#x000A0;&#x000A0;&#x000A0;&#x000A0;***&#x000A0;&#x000A0;***&#x000A0;&#x000A0;*** ";
+        }
+        if (line == 39) {
+            return
+                "&#x000A0;&#x000A0;&#x000A0;&#x000A0;***&#x000A0;***&#x000A0;&#x000A0;&#x000A0;&#x000A0;&#x000A0;&#x000A0;***&#x000A0;&#x000A0;***&#x000A0;&#x000A0;*** ";
+        }
+        if (line == 40) {
+            return
+                "&#x000A0;&#x000A0;&#x000A0;&#x000A0;&#x000A0;&#x000A0;&#x000A0;&#x000A0;*** ";
+        }
+        if (line == 41) {
+            return
+                "&#x000A0;&#x000A0;&#x000A0;****&#x000A0;&#x000A0;&#x000A0;*** ";
+        }
+        if (line == 42) {
+            return "&#x000A0;*******&#x000A0;&#x000A0;** ";
+        }
+        if (line == 43) {
+            return "&#x000A0;&#x000A0;&#x000A0;&#x000A0;&#x000A0;**** ";
+
+            //svgmoney
+        }
+        if (line == 44) {
+            return
+                "&#x000A0;$$$$$$\\&#x000A0;&#x000A0;$$$$$$$$$$&#x000A0;&#x000A0;";
+        }
+        if (line == 44) {
+            return
+                "$$&#x000A0;&#x000A0;__$$\\&#x000A0;$$&#x000A0;&#x000A0;_$$&#x000A0;&#x000A0;_$$\\ ";
+        }
+        if (line == 45) {
+            return
+                "$$&#x000A0;/&#x000A0;&#x000A0;$$&#x000A0;|$$&#x000A0;/&#x000A0;$$&#x000A0;/&#x000A0;$$&#x000A0;|";
+        }
+        if (line == 47) {
+            return
+                "$$&#x000A0;|&#x000A0;&#x000A0;$$&#x000A0;|$$&#x000A0;|&#x000A0;$$&#x000A0;|&#x000A0;$$&#x000A0;|";
+        }
+        if (line == 48) {
+            return
+                "\\$$$$$$$&#x000A0;|$$&#x000A0;|&#x000A0;$$&#x000A0;|&#x000A0;$$&#x000A0;|";
+        }
+        if (line == 49) {
+            return
+                "&#x000A0;\\____$$&#x000A0;|\\__|&#x000A0;\\__|&#x000A0;\\__|";
+        }
+        if (line == 50) {
+            return
+                "$$\\&#x000A0;&#x000A0;&#x000A0;$$&#x000A0;|&#x000A0;&#x000A0;&#x000A0;&#x000A0;&#x000A0;&#x000A0;&#x000A0;&#x000A0;&#x000A0;&#x000A0;&#x000A0;&#x000A0;&#x000A0;&#x000A0;";
+        }
+        if (line == 51) {
+            return
+                "\\$$$$$$&#x000A0;&#x000A0;|&#x000A0;&#x000A0;&#x000A0;&#x000A0;&#x000A0;&#x000A0;&#x000A0;&#x000A0;&#x000A0;&#x000A0;&#x000A0;&#x000A0;&#x000A0;&#x000A0;";
+        }
+        if (line == 52) {
+            return
+                "&#x000A0;\\______/&#x000A0;&#x000A0;&#x000A0;&#x000A0;&#x000A0;&#x000A0;&#x000A0;&#x000A0;&#x000A0;&#x000A0;&#x000A0;&#x000A0;&#x000A0;&#x000A0;&#x000A0;";
+
+            //svgalligator
+        }
+        if (line == 53) {
+            return
+                "&#x000A0;&#x000A0;&#x000A0;&#x000A0;&#x000A0;&#x000A0;::::::::&#x000A0;&#x000A0;&#x000A0;&#x000A0;&#x000A0;&#x000A0;&#x000A0;&#x000A0;&#x000A0;&#x000A0;&#x000A0;:::&#x000A0;&#x000A0;&#x000A0;::: ";
+        }
+        if (line == 54) {
+            return
+                "&#x000A0;&#x000A0;&#x000A0;&#x000A0;&#x000A0;:+:&#x000A0;&#x000A0;&#x000A0;:+:&#x000A0;&#x000A0;&#x000A0;&#x000A0;&#x000A0;&#x000A0;&#x000A0;&#x000A0;&#x000A0;:+:+:&#x000A0;:+:+: ";
+        }
+        if (line == 55) {
+            return
+                "&#x000A0;&#x000A0;&#x000A0;&#x000A0;+:+&#x000A0;&#x000A0;&#x000A0;&#x000A0;&#x000A0;&#x000A0;&#x000A0;&#x000A0;&#x000A0;&#x000A0;&#x000A0;&#x000A0;&#x000A0;&#x000A0;+:+&#x000A0;+:+:+&#x000A0;+:+ ";
+        }
+        if (line == 56) {
+            return
+                "&#x000A0;&#x000A0;&#x000A0;:#:&#x000A0;&#x000A0;&#x000A0;&#x000A0;&#x000A0;&#x000A0;&#x000A0;&#x000A0;&#x000A0;&#x000A0;&#x000A0;&#x000A0;&#x000A0;&#x000A0;+#+&#x000A0;&#x000A0;+:+&#x000A0;&#x000A0;+#+ ";
+        }
+        if (line == 57) {
+            return
+                "&#x000A0;&#x000A0;+#+&#x000A0;&#x000A0;&#x000A0;+#+#&#x000A0;&#x000A0;&#x000A0;&#x000A0;&#x000A0;&#x000A0;&#x000A0;+#+&#x000A0;&#x000A0;&#x000A0;&#x000A0;&#x000A0;&#x000A0;&#x000A0;+#+ ";
+        }
+        if (line == 58) {
+            return
+                "&#x000A0;#+#&#x000A0;&#x000A0;&#x000A0;&#x000A0;#+#&#x000A0;&#x000A0;&#x000A0;&#x000A0;&#x000A0;&#x000A0;&#x000A0;#+#&#x000A0;&#x000A0;&#x000A0;&#x000A0;&#x000A0;&#x000A0;&#x000A0;#+# ";
+        }
+        return
+            "&#x000A0;########&#x000A0;&#x000A0;&#x000A0;&#x000A0;&#x000A0;&#x000A0;&#x000A0;&#x000A0;###&#x000A0;&#x000A0;&#x000A0;&#x000A0;&#x000A0;&#x000A0;&#x000A0;### ";
+    }
+
     /* solhint-disable quotes */
 
-    function svgBase64Data(uint256 tokenId, bytes32 seed) public view returns (string memory) {
-        return
-        string(
-            abi.encodePacked("data:image/svg+xml;base64,", Base64.encode(svgRaw(tokenId, seed)))
-        );
-    }
+    string[6] private origins = [
+        "MONEY",
+        "ALLIGATOR",
+        "ASTERISK",
+        "SCRIPT",
+        "STICKS",
+        "DEVIL"
+    ];
 
-    function uint8tohexchar(uint8 i) public pure returns (uint8) {
-        return (i > 9) ?
-        (i + 87) : // ascii a-f
-        (i + 48); // ascii 0-9
-    }
+    uint16[] private asterisk = [
+        33,
+        34,
+        35,
+        36,
+        37,
+        37,
+        37,
+        38,
+        39,
+        40,
+        41,
+        42,
+        43
+    ];
+    uint16[] private stickLine = [0, 1, 2, 3, 3, 3, 4, 5];
 
-    function uint24tohexstr(uint24 i) public pure returns (string memory) {
-        bytes memory o = new bytes(6);
-        uint24 mask = 0x00000f;
-        o[5] = bytes1(uint8tohexchar(uint8(i & mask)));
-        i = i >> 4;
-        o[4] = bytes1(uint8tohexchar(uint8(i & mask)));
-        i = i >> 4;
-        o[3] = bytes1(uint8tohexchar(uint8(i & mask)));
-        i = i >> 4;
-        o[2] = bytes1(uint8tohexchar(uint8(i & mask)));
-        i = i >> 4;
-        o[1] = bytes1(uint8tohexchar(uint8(i & mask)));
-        i = i >> 4;
-        o[0] = bytes1(uint8tohexchar(uint8(i & mask)));
-        return string(o);
-    }
-
-    function bytes3tohexstr(bytes3 i) public pure returns (string memory) {
-        uint24 n = uint24(i);
-        return uint24tohexstr(n);
-    }
-
-    function svgRaw(uint256 tokenId, bytes32 seed) public view returns (bytes memory) {
+    function svgRaw(uint256 tokenId, bytes32 seed)
+        public
+        view
+        returns (bytes memory)
+    {
         bytes3 backgroundColor = bytes3(seed);
         bytes3 fontColor = bytes3(seed << 24);
         uint32 random = uint32(bytes4(seed << 48));
 
-        uint mod = random % 6;
+        uint256 mod = random % 6;
 
-        string[6] memory origins = [
-            "MONEY",
-            "ALLIGATOR",
-            "ASTERISK",
-            "SCRIPT",
-            "STICKS",
-            "DEVIL"
-        ];
+        bytes memory inner;
 
         if (mod == 0) {
-            return svgMoney(backgroundColor, fontColor);
+            inner = generateLinesFromRange(43, 51);
         } else if (mod == 1) {
-            return svgAsterisk(backgroundColor, fontColor);
+            inner = generateLinesFromIds(asterisk);
         } else if (mod == 2) {
-            return svgScript(backgroundColor, fontColor);
+            inner = generateLinesFromRange(22, 32);
         } else if (mod == 3) {
-            return svgSticks(backgroundColor, fontColor);
+            inner = generateLinesFromIds(stickLine);
         } else if (mod == 4) {
-            return svgDevil(backgroundColor, fontColor);
+            inner = generateLinesFromRange(14, 21);
         } else {
-            return svgAlligator(backgroundColor, fontColor);
+            inner = generateLinesFromRange(52, 59);
         }
+
+        return
+            abi.encodePacked(
+                svgPreambleString(backgroundColor, fontColor),
+                inner
+            );
     }
 
-    function svgDevil(bytes3 backgroundColor, bytes3 fontColor) private view returns (bytes memory) {
-        bytes memory devil = DynamicBuffer.allocate(2**16); // 64KB - reduce?
-        devil.appendSafe(
+    function svgPreambleString(bytes3 backgroundColor, bytes3 fontColor)
+        private
+        view
+        returns (bytes memory)
+    {
+        return
             abi.encodePacked(
                 "<svg viewBox='0 0 1024 1024' width='1024' height='1024' xmlns='http://www.w3.org/2000/svg'>",
                 '<style> @font-face { font-family: CorruptionsFont; src: url("',
                 font.font(),
                 '") format("opentype"); } ',
                 ".base{fill:#",
-                bytes3tohexstr(fontColor),
-                ";font-family:CorruptionsFont;font-size: 10px;} ",
-                "</style>",
-                '<g transform="scale(4 4)">',
-                '<rect width="175" height="120" fill="#',
-                bytes3tohexstr(backgroundColor),
-                '" /> '
-            )
-        );
-
-        // TODO: fix <> ^ thingy
-        devil.appendSafe(abi.encodePacked("<text x='25' y='25' class='base'>&#x000A0;&#x000A0;&#x000A0;&#x000A0;&#x000A0;&#x000A0;&#x000A0;&#x000A0;^-.&#x000A0;(``-')</text>"));
-        devil.appendSafe(abi.encodePacked("<text x='25' y='35' class='base'>&#x000A0;&#x000A0;.-^&#x000A0;&#x000A0;&#x000A0;&#x000A0;&#x000A0;&#x000A0;\\(OO )_</text>"));
-        devil.appendSafe(abi.encodePacked("<text x='25' y='45' class='base'>&#x000A0;&#x000A0;,---(``-'),--./&#x000A0;&#x000A0;,-.)</text>"));
-        devil.appendSafe(abi.encodePacked("<text x='25' y='55' class='base'>&#x000A0;'&#x000A0;&#x000A0;.-(OO )|&#x000A0;&#x000A0;&#x000A0;\\/&#x000A0;&#x000A0;&#x000A0;|</text>"));
-        devil.appendSafe(abi.encodePacked("<text x='25' y='65' class='base'>|&#x000A0;&#x000A0;|&#x000A0;.-,&#x000A0;\\|&#x000A0;&#x000A0;|\\/|&#x000A0;&#x000A0;|</text>"));
-        devil.appendSafe(abi.encodePacked("<text x='25' y='75' class='base'>|&#x000A0;&#x000A0;|&#x000A0;.-,_/|&#x000A0;&#x000A0;|&#x000A0;&#x000A0;|&#x000A0;&#x000A0;|</text>"));
-        devil.appendSafe(abi.encodePacked("<text x='25' y='85' class='base'>|&#x000A0;&#x000A0;``--'&#x000A0;|&#x000A0;|&#x000A0;&#x000A0;|&#x000A0;&#x000A0;|&#x000A0;&#x000A0;| </text>"));
-        devil.appendSafe(abi.encodePacked("<text x='25' y='95' class='base'>&#x000A0;`------'&#x000A0;&#x000A0;`--'&#x000A0;&#x000A0;&#x000A0;`--'</text>"));
-
-        devil.appendSafe("</g></svg>");
-
-        return devil;
-    }
-
-    function svgSticks(bytes3 backgroundColor, bytes3 fontColor) private view returns (bytes memory) {
-        bytes memory sticks = DynamicBuffer.allocate(2**16); // 64KB - reduce?
-        sticks.appendSafe(
-            abi.encodePacked(
-                "<svg viewBox='0 0 1024 1024' width='1024' height='1024' xmlns='http://www.w3.org/2000/svg'>",
-                '<style> @font-face { font-family: CorruptionsFont; src: url("',
-                font.font(),
-                '") format("opentype"); } ',
-                ".base{fill:#",
-                bytes3tohexstr(fontColor),
+                Strings.toHexString(uint256(uint24(fontColor))),
                 ";font-family:CorruptionsFont;font-size: 10px;} ",
                 "</style>",
                 '<g transform="scale(4 4)">',
                 '<rect width="195" height="145" fill="#',
-                bytes3tohexstr(backgroundColor),
+                Strings.toHexString(uint256(uint24(backgroundColor))),
                 '" /> '
-            )
-        );
-
-        sticks.appendSafe(abi.encodePacked("<text x='20' y='40' class='base'>&#x000A0;&#x000A0;&#x000A0;&#x000A0;_/_/_&#x000A0;&#x000A0;&#x000A0;_/_/_/&#x000A0;&#x000A0;&#x000A0;_/_/ </text>"));
-        sticks.appendSafe(abi.encodePacked("<text x='20' y='50' class='base'>&#x000A0;_/&#x000A0;&#x000A0;&#x000A0;&#x000A0;_/&#x000A0;&#x000A0;_/&#x000A0;&#x000A0;&#x000A0;&#x000A0;_/&#x000A0;&#x000A0;&#x000A0;&#x000A0;_/ </text>"));
-        sticks.appendSafe(abi.encodePacked("<text x='20' y='60' class='base'>_/&#x000A0;&#x000A0;&#x000A0;&#x000A0;_/&#x000A0;&#x000A0;_/&#x000A0;&#x000A0;&#x000A0;&#x000A0;_/&#x000A0;&#x000A0;&#x000A0;&#x000A0;_/ </text>"));
-        sticks.appendSafe(abi.encodePacked("<text x='20' y='70' class='base'>&#x000A0;_/_/_/&#x000A0;&#x000A0;_/&#x000A0;&#x000A0;&#x000A0;&#x000A0;_/&#x000A0;&#x000A0;&#x000A0;&#x000A0;_/</text>"));
-        sticks.appendSafe(abi.encodePacked("<text x='20' y='80' class='base'>&#x000A0;&#x000A0;&#x000A0;&#x000A0;_/</text>"));
-        sticks.appendSafe(abi.encodePacked("<text x='20' y='90' class='base'>&#x000A0;_/_/</text>"));
-
-        sticks.appendSafe("</g></svg>");
-
-        return sticks;
+            );
     }
 
-    function svgScript(bytes3 backgroundColor, bytes3 fontColor) private view returns (bytes memory) {
-        bytes memory script = DynamicBuffer.allocate(2**16); // 64KB - reduce?
-        script.appendSafe(
-            abi.encodePacked(
-                "<svg viewBox='0 0 1024 1024' width='1024' height='1024' xmlns='http://www.w3.org/2000/svg'>",
-                '<style> @font-face { font-family: CorruptionsFont; src: url("',
-                font.font(),
-                '") format("opentype"); } ',
-                ".base{fill:#",
-                bytes3tohexstr(fontColor),
-                ";font-family:CorruptionsFont;font-size: 10px;} ",
-                "</style>",
-                '<g transform="scale(4 4)">',
-                '<rect width="195" height="145" fill="#',
-                bytes3tohexstr(backgroundColor),
-                '" /> '
-            )
-        );
-
-        script.appendSafe(abi.encodePacked("<text x='20' y='25' class='base'>gggg,gg&#x000A0;&#x000A0;&#x000A0;&#x000A0;&#x000A0;,ggg,,ggg,,ggg,</text>"));
-        script.appendSafe(abi.encodePacked("<text x='20' y='35' class='base'>dP\"&#x000A0;\"Y8I&#x000A0;&#x000A0;&#x000A0;8\"&#x000A0;&#x000A0;'8P\"&#x000A0;\"8P\"&#x000A0;\"8,</text>"));
-        script.appendSafe(abi.encodePacked("<text x='20' y='45' class='base'>i8'&#x000A0;&#x000A0;&#x000A0;8I&#x000A0;&#x000A0;I8&#x000A0;&#x000A0;&#x000A0;8I\"&#x000A0;\"8I&#x000A0;&#x000A0;8I </text>"));
-        script.appendSafe(abi.encodePacked("<text x='20' y='55' class='base'>d8,&#x000A0;&#x000A0;d8I&#x000A0;&#x000A0;dP&#x000A0;&#x000A0;&#x000A0;8I\"&#x000A0;\"8I&#x000A0;&#x000A0;Yb,</text>"));
-        script.appendSafe(abi.encodePacked("<text x='20' y='65' class='base'>PY8888P'888P&#x000A0;&#x000A0;&#x000A0;8I\"&#x000A0;\"8I&#x000A0;&#x000A0;\"Y8 </text>"));
-        script.appendSafe(abi.encodePacked("<text x='20' y='75' class='base'>,d8I'</text>"));
-        script.appendSafe(abi.encodePacked("<text x='20' y='85' class='base'>,dP'8I</text>"));
-        script.appendSafe(abi.encodePacked("<text x='20' y='95' class='base'>,8\"&#x000A0;&#x000A0;8I</text>"));
-        script.appendSafe(abi.encodePacked("<text x='20' y='105' class='base'>I8&#x000A0;&#x000A0;8I </text>"));
-        script.appendSafe(abi.encodePacked("<text x='20' y='115' class='base'>`8,&#x000A0;&#x000A0;8I </text>"));
-        script.appendSafe(abi.encodePacked("<text x='20' y='125' class='base'>`Y8P\"</text>"));
-
-        script.appendSafe("</g></svg>");
-
-        return script;
+    function generateLinesFromIds(uint16[] memory ids)
+        internal
+        view
+        returns (bytes memory)
+    {
+        bytes memory out;
+        for (uint256 i = 0; i < ids.length; i++) {
+            out = abi.encodePacked(
+                out,
+                "<text x='20' y='",
+                Strings.toString(40 + i * 10),
+                "' class='base'>",
+                getLine(ids[i]),
+                "</text>"
+            );
+        }
+        return abi.encodePacked(out, "</g></svg>");
     }
 
-    function svgAsterisk(bytes3 backgroundColor, bytes3 fontColor) private view returns (bytes memory) {
-        bytes memory asterisk = DynamicBuffer.allocate(2**16); // 64KB - reduce?
-        asterisk.appendSafe(
-            abi.encodePacked(
-                "<svg viewBox='0 0 1024 1024' width='1024' height='1024' xmlns='http://www.w3.org/2000/svg'>",
-                '<style> @font-face { font-family: CorruptionsFont; src: url("',
-                font.font(),
-                '") format("opentype"); } ',
-                ".base{fill:#",
-                bytes3tohexstr(fontColor),
-                ";font-family:CorruptionsFont;font-size: 10px;} ",
-                "</style>",
-                '<g transform="scale(4 4)">',
-                '<rect width="210" height="170" fill="#',
-                bytes3tohexstr(backgroundColor),
-                '" /> '
-            )
-        );
-
-        asterisk.appendSafe(abi.encodePacked("<text x='20' y='25' class='base'>&#x000A0;&#x000A0;&#x000A0;&#x000A0;****&#x000A0;&#x000A0;&#x000A0;&#x000A0;&#x000A0;&#x000A0;***&#x000A0;****&#x000A0;**** </text>"));
-        asterisk.appendSafe(abi.encodePacked("<text x='20' y='35' class='base'>&#x000A0;&#x000A0;&#x000A0;*&#x000A0;&#x000A0;***&#x000A0;&#x000A0;*&#x000A0;&#x000A0;&#x000A0;***&#x000A0;****&#x000A0;***&#x000A0;&#x000A0;*</text>"));
-        asterisk.appendSafe(abi.encodePacked("<text x='20' y='45' class='base'>&#x000A0;&#x000A0;*&#x000A0;&#x000A0;&#x000A0;****&#x000A0;&#x000A0;&#x000A0;&#x000A0;&#x000A0;**&#x000A0;&#x000A0;****&#x000A0;****</text>"));
-        asterisk.appendSafe(abi.encodePacked("<text x='20' y='55' class='base'>&#x000A0;**&#x000A0;&#x000A0;&#x000A0;&#x000A0;**&#x000A0;&#x000A0;&#x000A0;&#x000A0;&#x000A0;&#x000A0;**&#x000A0;&#x000A0;&#x000A0;**&#x000A0;&#x000A0;&#x000A0;** </text>"));
-        asterisk.appendSafe(abi.encodePacked("<text x='20' y='65' class='base'>&#x000A0;**&#x000A0;&#x000A0;&#x000A0;&#x000A0;&#x000A0;**&#x000A0;&#x000A0;&#x000A0;&#x000A0;&#x000A0;&#x000A0;**&#x000A0;&#x000A0;&#x000A0;**&#x000A0;&#x000A0;&#x000A0;** </text>"));
-        asterisk.appendSafe(abi.encodePacked("<text x='20' y='75' class='base'>&#x000A0;**&#x000A0;&#x000A0;&#x000A0;&#x000A0;&#x000A0;**&#x000A0;&#x000A0;&#x000A0;&#x000A0;&#x000A0;&#x000A0;**&#x000A0;&#x000A0;&#x000A0;**&#x000A0;&#x000A0;&#x000A0;** </text>"));
-        asterisk.appendSafe(abi.encodePacked("<text x='20' y='85' class='base'>&#x000A0;**&#x000A0;&#x000A0;&#x000A0;&#x000A0;&#x000A0;**&#x000A0;&#x000A0;&#x000A0;&#x000A0;&#x000A0;&#x000A0;**&#x000A0;&#x000A0;&#x000A0;**&#x000A0;&#x000A0;&#x000A0;** </text>"));
-        asterisk.appendSafe(abi.encodePacked("<text x='20' y='95' class='base'>&#x000A0;**&#x000A0;&#x000A0;&#x000A0;&#x000A0;&#x000A0;**&#x000A0;&#x000A0;&#x000A0;&#x000A0;&#x000A0;&#x000A0;**&#x000A0;&#x000A0;&#x000A0;**&#x000A0;&#x000A0;&#x000A0;** </text>"));
-        asterisk.appendSafe(abi.encodePacked("<text x='20' y='105' class='base'>&#x000A0;&#x000A0;********&#x000A0;&#x000A0;&#x000A0;&#x000A0;&#x000A0;&#x000A0;***&#x000A0;&#x000A0;***&#x000A0;&#x000A0;*** </text>"));
-        asterisk.appendSafe(abi.encodePacked("<text x='20' y='115' class='base'>&#x000A0;&#x000A0;&#x000A0;&#x000A0;***&#x000A0;***&#x000A0;&#x000A0;&#x000A0;&#x000A0;&#x000A0;&#x000A0;***&#x000A0;&#x000A0;***&#x000A0;&#x000A0;*** </text>"));
-        asterisk.appendSafe(abi.encodePacked("<text x='20' y='125' class='base'>&#x000A0;&#x000A0;&#x000A0;&#x000A0;&#x000A0;&#x000A0;&#x000A0;&#x000A0;*** </text>"));
-        asterisk.appendSafe(abi.encodePacked("<text x='20' y='135' class='base'>&#x000A0;&#x000A0;&#x000A0;****&#x000A0;&#x000A0;&#x000A0;*** </text>"));
-        asterisk.appendSafe(abi.encodePacked("<text x='20' y='145' class='base'>&#x000A0;*******&#x000A0;&#x000A0;** </text>"));
-        asterisk.appendSafe(abi.encodePacked("<text x='20' y='155' class='base'>*&#x000A0;&#x000A0;&#x000A0;&#x000A0;&#x000A0;**** </text>"));
-
-        asterisk.appendSafe("</g></svg>");
-
-        return asterisk;
+    function generateLinesFromRange(uint16 start, uint16 end)
+        internal
+        pure
+        returns (bytes memory)
+    {
+        bytes memory out;
+        for (uint16 i = start; i < end; i++) {
+            out = abi.encodePacked(
+                out,
+                "<text x='20' y='",
+                Strings.toString(40 + i * 10),
+                "' class='base'>",
+                getLine(i),
+                "</text>"
+            );
+        }
+        return abi.encodePacked(out, "</g></svg>");
     }
 
-    function svgMoney(bytes3 backgroundColor, bytes3 fontColor) private view returns (bytes memory) {
-        bytes memory money = DynamicBuffer.allocate(2**16); // 64KB - reduce?
-        money.appendSafe(
-            abi.encodePacked(
-                "<svg viewBox='0 0 1024 1024' width='1024' height='1024' xmlns='http://www.w3.org/2000/svg'>",
-                '<style> @font-face { font-family: CorruptionsFont; src: url("',
-                font.font(),
-                '") format("opentype"); } ',
-                ".base{fill:#",
-                bytes3tohexstr(fontColor),
-                ";font-family:CorruptionsFont;font-size: 10px;} ",
-                "</style>",
-                '<g transform="scale(4 4)">',
-                '<rect width="215" height="150" fill="#',
-                bytes3tohexstr(backgroundColor),
-                '" /> '
-            )
-        );
-
-        money.appendSafe(abi.encodePacked("<text x='35' y='40' class='base'>&#x000A0;$$$$$$\\&#x000A0;&#x000A0;$$$$$$$$$$&#x000A0;&#x000A0;</text>"));
-        money.appendSafe(abi.encodePacked("<text x='35' y='50' class='base'>$$&#x000A0;&#x000A0;__$$\\&#x000A0;$$&#x000A0;&#x000A0;_$$&#x000A0;&#x000A0;_$$\\ </text>"));
-        money.appendSafe(abi.encodePacked("<text x='35' y='60' class='base'>$$&#x000A0;/&#x000A0;&#x000A0;$$&#x000A0;|$$&#x000A0;/&#x000A0;$$&#x000A0;/&#x000A0;$$&#x000A0;|</text>"));
-        money.appendSafe(abi.encodePacked("<text x='35' y='70' class='base'>$$&#x000A0;|&#x000A0;&#x000A0;$$&#x000A0;|$$&#x000A0;|&#x000A0;$$&#x000A0;|&#x000A0;$$&#x000A0;|</text>"));
-        money.appendSafe(abi.encodePacked("<text x='35' y='80' class='base'>\\$$$$$$$&#x000A0;|$$&#x000A0;|&#x000A0;$$&#x000A0;|&#x000A0;$$&#x000A0;|</text>"));
-        money.appendSafe(abi.encodePacked("<text x='35' y='90' class='base'>&#x000A0;\\____$$&#x000A0;|\\__|&#x000A0;\\__|&#x000A0;\\__|</text>"));
-        money.appendSafe(abi.encodePacked("<text x='35' y='100' class='base'>$$\\&#x000A0;&#x000A0;&#x000A0;$$&#x000A0;|&#x000A0;&#x000A0;&#x000A0;&#x000A0;&#x000A0;&#x000A0;&#x000A0;&#x000A0;&#x000A0;&#x000A0;&#x000A0;&#x000A0;&#x000A0;&#x000A0;</text>"));
-        money.appendSafe(abi.encodePacked("<text x='35' y='110' class='base'>\\$$$$$$&#x000A0;&#x000A0;|&#x000A0;&#x000A0;&#x000A0;&#x000A0;&#x000A0;&#x000A0;&#x000A0;&#x000A0;&#x000A0;&#x000A0;&#x000A0;&#x000A0;&#x000A0;&#x000A0;</text>"));
-        money.appendSafe(abi.encodePacked("<text x='35' y='120' class='base'>&#x000A0;\\______/&#x000A0;&#x000A0;&#x000A0;&#x000A0;&#x000A0;&#x000A0;&#x000A0;&#x000A0;&#x000A0;&#x000A0;&#x000A0;&#x000A0;&#x000A0;&#x000A0;&#x000A0;</text>"));
-
-        money.appendSafe("</g></svg>");
-
-        return money;
+    function svgBase64Data(bytes memory data)
+        public
+        pure
+        returns (string memory)
+    {
+        return
+            string(
+                abi.encodePacked(
+                    "data:image/svg+xml;base64,",
+                    Base64.encode(data)
+                )
+            );
     }
 
-    function svgAlligator(bytes3 backgroundColor, bytes3 fontColor) private view returns (bytes memory) {
-        bytes memory alligator = DynamicBuffer.allocate(2**16); // 64KB - reduce?
-        alligator.appendSafe(
-            abi.encodePacked(
-                "<svg viewBox='0 0 1024 1024' width='1024' height='1024' xmlns='http://www.w3.org/2000/svg'>",
-                '<style> @font-face { font-family: CorruptionsFont; src: url("',
-                font.font(),
-                '") format("opentype"); } ',
-                ".base{fill:#",
-                bytes3tohexstr(fontColor),
-                ";font-family:CorruptionsFont;font-size: 10px;} ",
-                "</style>",
-                '<g transform="scale(4 4)">',
-                '<rect width="400" height="135" fill="#',
-                bytes3tohexstr(backgroundColor),
-                '" /> '
-            )
-        );
-
-        alligator.appendSafe(abi.encodePacked("<text x='20' y='40' class='base'>&#x000A0;&#x000A0;&#x000A0;&#x000A0;&#x000A0;&#x000A0;::::::::&#x000A0;&#x000A0;&#x000A0;&#x000A0;&#x000A0;&#x000A0;&#x000A0;&#x000A0;&#x000A0;&#x000A0;&#x000A0;:::&#x000A0;&#x000A0;&#x000A0;::: </text>"));
-        alligator.appendSafe(abi.encodePacked("<text x='20' y='50' class='base'>&#x000A0;&#x000A0;&#x000A0;&#x000A0;&#x000A0;:+:&#x000A0;&#x000A0;&#x000A0;:+:&#x000A0;&#x000A0;&#x000A0;&#x000A0;&#x000A0;&#x000A0;&#x000A0;&#x000A0;&#x000A0;:+:+:&#x000A0;:+:+: </text> "));
-        alligator.appendSafe(abi.encodePacked("<text x='20' y='60' class='base'>&#x000A0;&#x000A0;&#x000A0;&#x000A0;+:+&#x000A0;&#x000A0;&#x000A0;&#x000A0;&#x000A0;&#x000A0;&#x000A0;&#x000A0;&#x000A0;&#x000A0;&#x000A0;&#x000A0;&#x000A0;&#x000A0;+:+&#x000A0;+:+:+&#x000A0;+:+ </text>"));
-        alligator.appendSafe(abi.encodePacked("<text x='20' y='70' class='base'>&#x000A0;&#x000A0;&#x000A0;:#:&#x000A0;&#x000A0;&#x000A0;&#x000A0;&#x000A0;&#x000A0;&#x000A0;&#x000A0;&#x000A0;&#x000A0;&#x000A0;&#x000A0;&#x000A0;&#x000A0;+#+&#x000A0;&#x000A0;+:+&#x000A0;&#x000A0;+#+ </text>"));
-        alligator.appendSafe(abi.encodePacked("<text x='20' y='80' class='base'>&#x000A0;&#x000A0;+#+&#x000A0;&#x000A0;&#x000A0;+#+#&#x000A0;&#x000A0;&#x000A0;&#x000A0;&#x000A0;&#x000A0;&#x000A0;+#+&#x000A0;&#x000A0;&#x000A0;&#x000A0;&#x000A0;&#x000A0;&#x000A0;+#+ </text>"));
-        alligator.appendSafe(abi.encodePacked("<text x='20' y='90' class='base'>&#x000A0;#+#&#x000A0;&#x000A0;&#x000A0;&#x000A0;#+#&#x000A0;&#x000A0;&#x000A0;&#x000A0;&#x000A0;&#x000A0;&#x000A0;#+#&#x000A0;&#x000A0;&#x000A0;&#x000A0;&#x000A0;&#x000A0;&#x000A0;#+# </text>"));
-        alligator.appendSafe(abi.encodePacked("<text x='20' y='100' class='base'>&#x000A0;########&#x000A0;&#x000A0;&#x000A0;&#x000A0;&#x000A0;&#x000A0;&#x000A0;&#x000A0;###&#x000A0;&#x000A0;&#x000A0;&#x000A0;&#x000A0;&#x000A0;&#x000A0;### </text>"));
-
-        alligator.appendSafe("</g></svg>");
-
-
-        return alligator;
-
-    }
-
-    function tokenURI(uint256 tokenId, bytes32 seed) public view returns (string memory) {
+    function tokenURI(uint256 tokenId, bytes32 seed)
+        public
+        view
+        returns (string memory)
+    {
         string memory json;
-        json = Base64.encode(bytes(string(abi.encodePacked('{"name": "0x', EssentialStrings.toHexString(tokenId), '", "description": "', "no description", '", "image": "', svgBase64Data(tokenId, seed), '"}'))));
+        bytes memory tokenData = svgRaw(tokenId, seed);
+        json = Base64.encode(
+            bytes(
+                string(
+                    abi.encodePacked(
+                        '{"name": "0x',
+                        Strings.toHexString(tokenId),
+                        '", "description": "',
+                        "no description",
+                        '", "image": "',
+                        svgBase64Data(tokenData),
+                        '"}'
+                    )
+                )
+            )
+        );
         return string(abi.encodePacked("data:application/json;base64,", json));
     }
 }
