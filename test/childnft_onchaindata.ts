@@ -63,6 +63,7 @@ describe("Gm", () => {
     for (let i = 0; i < 25; i++){
       const svg = await getSvgFromTokenId(gm, i)
       const seed = await gm.seed(i)
+      console.log(seed)
       const mod = await getSeedAsciiMod(seed)
       imagesOut[i] = svg;
     }
