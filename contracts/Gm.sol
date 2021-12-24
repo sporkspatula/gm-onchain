@@ -35,9 +35,9 @@ contract Gm is ERC721Delegated {
         maxSupply = _maxSupply;
     }
 
-    function mint(bytes32 seed) public {
+    function mint() public {
         require(currentTokenId < maxSupply, "gm, mint is sold out");
-        mintSeeds[currentTokenId] = seed;
+        mintSeeds[currentTokenId] = _generateSeed(currentTokenId);
         _mint(msg.sender, currentTokenId++);
     }
 
@@ -48,6 +48,14 @@ contract Gm is ERC721Delegated {
     function tokenURI(uint256 tokenId) external view returns (string memory) {
         bytes32 seed = mintSeeds[tokenId];
         return renderer.tokenURI(tokenId, seed);
+    }
+
+    function seed(uint256 tokenId) external view returns (bytes32) {
+        return mintSeeds[tokenId];
+    }
+
+    function _generateSeed(uint256 tokenId) private returns(bytes32) {
+        return keccak256(abi.encodePacked(block.timestamp, msg.sender, tokenId));
     }
 
 }
