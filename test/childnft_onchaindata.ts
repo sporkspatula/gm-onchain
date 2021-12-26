@@ -57,13 +57,13 @@ describe("Gm", () => {
       const mod = await getSeedAsciiMod(seed);
       imagesOut[
         i
-      ] = `<div style="width:512px;height:512px;background-image:url('data:image/svg+xml;base64,${Buffer.from(
+      ] = `<div style="width: 800px; height: 600px;background-image:url('data:image/svg+xml;base64,${Buffer.from(
         svg,
         "utf8"
       ).toString("base64")}"></div>`;
     }
 
-    const result = `<style>svg{margin:10px;}</style><div style="display: grid; grid-template-columns: repeat(4, 1fr);">${imagesOut.join(
+    const result = `<style>svg{margin:10px;}</style><div style="display: grid; grid-template-columns: repeat(2, 1fr);">${imagesOut.join(
       "\n"
     )}</div>`;
     await writeFile(join(__dirname, "./out.html"), result);
