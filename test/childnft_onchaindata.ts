@@ -45,12 +45,12 @@ describe("Gm", () => {
   });
 
   it("mints", async () => {
-    for (let i = 0; i < 25; i++) {
+    for (let i = 0; i < 100; i++) {
       await gm.mint();
     }
 
-    const imagesOut = new Array(25);
-    for (let i = 0; i < 25; i++) {
+    const imagesOut = new Array(100);
+    for (let i = 0; i < 100; i++) {
       const svg = await getSvgFromTokenId(gm, i);
       const seed = await gm.seed(i);
       console.log(seed);

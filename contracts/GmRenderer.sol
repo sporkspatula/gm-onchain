@@ -261,17 +261,112 @@ contract GmRenderer {
             return
                 "&#x000A0;########&#x000A0;&#x000A0;&#x000A0;&#x000A0;&#x000A0;&#x000A0;&#x000A0;&#x000A0;###&#x000A0;&#x000A0;&#x000A0;&#x000A0;&#x000A0;&#x000A0;&#x000A0;### ";
         }
+        if (line == 60) {
+            return
+                "&#x000A0;.------..------.";
+        }
+        if (line == 61) {
+            return
+                "&#x000A0;|G.--.&#x000A0;||M.--.&#x000A0;|";
+        }
+        if (line == 62) {
+            return
+                "&#x000A0;|&#x000A0;:/\\:&#x000A0;||&#x000A0;:\\/:&#x000A0;|";
+        }
+        if (line == 63) {
+            return
+                "&#x000A0;|&#x000A0;:\\/:&#x000A0;||&#x000A0;:\\/:&#x000A0;|";
+        }
+        if (line == 64) {
+            return
+                "&#x000A0;|&#x000A0;&#x000A0;--&#x000A0;G||&#x000A0;&#x000A0;--&#x000A0;M|";
+        }
+        if (line == 65) {
+            return
+                "&#x000A0;&#x000A0;------&#x000A0;&#x000A0;------";
+        }
+        if (line == 66) {
+            return
+                "&#x000A0;_______&#x000A0;_______";
+        }
+        if (line == 67) {
+            return
+                "|\\&#x000A0;&#x000A0;&#x000A0;&#x000A0;&#x000A0;/|\\&#x000A0;&#x000A0;&#x000A0;&#x000A0;&#x000A0;/|";
+        }
+        if (line == 68) {
+            return
+                "|&#x000A0;+---+&#x000A0;|&#x000A0;+---+&#x000A0;|";
+        }
+        if (line == 69) {
+            return
+                "|&#x000A0;|&#x000A0;g&#x000A0;|&#x000A0;|&#x000A0;|&#x000A0;m&#x000A0;|&#x000A0;|";
+        }
+        if (line == 70) {
+            return
+                "|&#x000A0;|&#x000A0;&#x000A0;&#x000A0;|&#x000A0;|&#x000A0;|&#x000A0;&#x000A0;&#x000A0;|&#x000A0;|";
+        }
+        if (line == 71) {
+            return
+                "|&#x000A0;+---+&#x000A0;|&#x000A0;+---+&#x000A0;|";
+        }
+        if (line == 72) {
+            return
+                "|/_____\\|/_____\\|";
+        }
+        if (line == 73) {
+            return "&#x000A0;.----------------.  &#x000A0;.----------------.";
+        }
+        if (line == 74) {
+            return "|&#x000A0;.--------------.&#x000A0;|| .--------------.&#x000A0;|";
+        }
+        if (line == 75) {
+            return "|&#x000A0;|&#x000A0;&#x000A0;&#x000A0;&#x000A0;______&#x000A0;&#x000A0;&#x000A0;&#x000A0;|&#x000A0;||&#x000A0;|&#x000A0;____&#x000A0;&#x000A0;&#x000A0;&#x000A0;____&#x000A0;|&#x000A0;| ";
+        }
+        if (line == 76) {
+            return "|&#x000A0;|&#x000A0;&#x000A0;.:&#x000A0;___&#x000A0;&#x000A0;|&#x000A0;&#x000A0;&#x000A0;|&#x000A0;||&#x000A0;||_&#x000A0;&#x000A0;&#x000A0;\\&#x000A0;&#x000A0;/&#x000A0;&#x000A0;&#x000A0;_||&#x000A0;| ";
+        }
+        if (line == 77) {
+            return "|&#x000A0;|&#x000A0;/&#x000A0;.:&#x000A0;&#x000A0;&#x000A0;\\_|&#x000A0;&#x000A0;&#x000A0;|&#x000A0;||&#x000A0;|&#x000A0;&#x000A0;|&#x000A0;&#x000A0;&#x000A0;\\/&#x000A0;&#x000A0;&#x000A0;|&#x000A0;&#x000A0;|&#x000A0;| ";
+        }
+        if (line == 78) {
+            return "|&#x000A0;|&#x000A0;|&#x000A0;|&#x000A0;&#x000A0;&#x000A0;&#x000A0;____&#x000A0;&#x000A0;|&#x000A0;||&#x000A0;|&#x000A0;&#x000A0;|&#x000A0;|\\&#x000A0;&#x000A0;/|&#x000A0;|&#x000A0;&#x000A0;|&#x000A0;|";
+        }
+        if (line == 79) {
+            return "|&#x000A0;|&#x000A0;\\&#x000A0;:.___,]&#x000A0;&#x000A0;_|&#x000A0;|&#x000A0;||&#x000A0;|&#x000A0;_|&#x000A0;|_\\/_|&#x000A0;|_&#x000A0;|&#x000A0;| ";
+        }
+        if (line == 80) {
+            return "|&#x000A0;|&#x000A0;&#x000A0;:._____.:&#x000A0;&#x000A0;&#x000A0;|&#x000A0;||&#x000A0;||_____||_____||&#x000A0;| ";
+        }
+        if (line == 81) {
+            return "|&#x000A0;|&#x000A0;&#x000A0;&#x000A0;&#x000A0;&#x000A0;&#x000A0;&#x000A0;&#x000A0;&#x000A0;&#x000A0;&#x000A0;&#x000A0;&#x000A0;&#x000A0;|&#x000A0;||&#x000A0;|&#x000A0;&#x000A0;&#x000A0;&#x000A0;&#x000A0;&#x000A0;&#x000A0;&#x000A0;&#x000A0;&#x000A0;&#x000A0;&#x000A0;&#x000A0;&#x000A0;|&#x000A0;| ";
+        }
+        if (line == 82) {
+            return "|&#x000A0;&#x000A0;--------------&#x000A0;&#x000A0;||&#x000A0; -------------&#x000A0;&#x000A0;&#x000A0;| ";
+        }
+        if (line == 83) {
+            return "&#x000A0;------------------&#x000A0;&#x000A0;------------------&#x000A0;";
+        }
+        if (line == 84) {
+            return "";
+        }
+        if (line == 85) {
+            return "";
+        }
+
     }
 
     /* solhint-disable quotes */
 
-    string[6] private origins = [
+    string[9] private origins = [
         "MONEY",
         "ALLIGATOR",
         "ASTERISK",
         "SCRIPT",
         "STICKS",
-        "DEVIL"
+        "DEVIL",
+        "CARDS",
+        "KEYBOARD",
+        "BOXES"
     ];
 
     uint16[] private asterisk = [
@@ -300,7 +395,7 @@ contract GmRenderer {
         bytes3 fontColor = bytes3(seed << 24);
         uint32 random = uint32(bytes4(seed << 48));
 
-        uint256 mod = random % 6;
+        uint256 mod = random % 9;
 
         bytes memory inner;
 
@@ -314,6 +409,12 @@ contract GmRenderer {
             inner = generateLinesFromIds(stickLine);
         } else if (mod == 4) {
             inner = generateLinesFromRange(14, 21);
+        } else if (mod == 5) {
+            inner  = generateLinesFromRange(60,65);
+        } else if (mod == 6) {
+            inner = generateLinesFromRange(66,72);
+        } else if (mod == 7) {
+            inner = generateLinesFromRange(73, 83);
         } else {
             inner = generateLinesFromRange(53, 59);
         }
