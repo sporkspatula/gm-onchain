@@ -359,7 +359,7 @@ contract GmRenderer {
 
     function generateLinesFromIds(uint16[] memory ids)
         internal
-        view
+        pure
         returns (bytes memory)
     {
         bytes memory out;
