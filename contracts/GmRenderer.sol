@@ -257,8 +257,10 @@ contract GmRenderer {
             return
                 "&#x000A0;#+#&#x000A0;&#x000A0;&#x000A0;&#x000A0;#+#&#x000A0;&#x000A0;&#x000A0;&#x000A0;&#x000A0;&#x000A0;&#x000A0;#+#&#x000A0;&#x000A0;&#x000A0;&#x000A0;&#x000A0;&#x000A0;&#x000A0;#+# ";
         }
-        return
-            "&#x000A0;########&#x000A0;&#x000A0;&#x000A0;&#x000A0;&#x000A0;&#x000A0;&#x000A0;&#x000A0;###&#x000A0;&#x000A0;&#x000A0;&#x000A0;&#x000A0;&#x000A0;&#x000A0;### ";
+        if (line == 59) {
+            return
+                "&#x000A0;########&#x000A0;&#x000A0;&#x000A0;&#x000A0;&#x000A0;&#x000A0;&#x000A0;&#x000A0;###&#x000A0;&#x000A0;&#x000A0;&#x000A0;&#x000A0;&#x000A0;&#x000A0;### ";
+        }
     }
 
     /* solhint-disable quotes */
@@ -303,7 +305,7 @@ contract GmRenderer {
         bytes memory inner;
 
         if (mod == 0) {
-            inner = generateLinesFromRange(44, 51);
+            inner = generateLinesFromRange(44, 52);
         } else if (mod == 1) {
             inner = generateLinesFromIds(asterisk);
         } else if (mod == 2) {
@@ -313,7 +315,7 @@ contract GmRenderer {
         } else if (mod == 4) {
             inner = generateLinesFromRange(14, 21);
         } else {
-            inner = generateLinesFromRange(52, 59);
+            inner = generateLinesFromRange(53, 59);
         }
 
         return
@@ -382,7 +384,7 @@ contract GmRenderer {
         returns (bytes memory)
     {
         bytes memory out;
-        for (uint16 i = 0; i < end-start; i++) {
+        for (uint16 i = 0; i <= end-start; i++) {
             out = abi.encodePacked(
                 out,
                 "<text x='20' y='",
