@@ -8,11 +8,16 @@ module.exports = async ({ getNamedAccounts, deployments }: any) => {
         corruptionsFontAddress = (await deployments.get("CorruptionsFont")).address;
     }
 
-    await deploy("GmRenderer", {
-        from: deployer,
-        args: [corruptionsFontAddress],
-        log: true,
-    });
+    try {
+        await deploy("GmRenderer", {
+            from: deployer,
+            args: [corruptionsFontAddress],
+            log: true,
+        });
+    } catch (err) {
+        console.log(err);
+        throw err;
+    }
 };
 module.exports.tags = ["GmRenderer"];
 module.exports.dependencies = ["CorruptionsFont"];

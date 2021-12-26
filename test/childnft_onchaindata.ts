@@ -57,7 +57,7 @@ describe("Gm", () => {
       const mod = await getSeedAsciiMod(seed);
       imagesOut[
         i
-      ] = `<div style="width: 800px; height: 600px;background-image:url('data:image/svg+xml;base64,${Buffer.from(
+      ] = `<div style="width: 1536px; height: 1024px;background-image:url('data:image/svg+xml;base64,${Buffer.from(
         svg,
         "utf8"
       ).toString("base64")}"></div>`;

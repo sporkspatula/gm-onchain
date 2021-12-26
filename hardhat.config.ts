@@ -7,6 +7,8 @@ import "@nomiclabs/hardhat-waffle";
 import "@nomiclabs/hardhat-etherscan";
 import { HardhatUserConfig } from "hardhat/config";
 import networks from "./networks";
+import "hardhat-contract-sizer";
+
 import "./setup-env";
 
 /**
