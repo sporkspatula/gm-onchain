@@ -2,10 +2,14 @@ import { SignerWithAddress } from "@nomiclabs/hardhat-ethers/signers";
 import { expect } from "chai";
 import "@nomiclabs/hardhat-ethers";
 import { ethers, deployments } from "hardhat";
-import { ERC721Base, Gm, TestBase } from "../typechain";
+import { ERC721Base, Gm, GmRenderer__factory, TestBase } from "../typechain";
 import { keccak256 } from "ethers/lib/utils";
 import { writeFile } from "fs/promises";
 import { join } from "path";
+// @ts-ignore
+import pako from 'pako';
+
+const deflate = (str: string) => [str.length,Buffer.from(pako.deflateRaw(Buffer.from(str, 'utf-8'), {level: 9})).toString('hex')]
 
 describe("Gm", () => {
   let signer: SignerWithAddress;
@@ -67,5 +71,32 @@ describe("Gm", () => {
       "\n"
     )}</div>`;
     await writeFile(join(__dirname, "./out.html"), result);
+  });
+  // it.only("gets lines", async () => {
+  //   const renderer = GmRenderer__factory.connect(
+  //     (await deployments.get("GmRenderer")).address,
+  //     signer
+  //   );
+  //   for (let i = 0; i < 12; i++) {
+  //     const body = await renderer.svgBody(i);
+  //     const [len, amt] = deflate(body);
+  //     console.log(`
+  //     if (index == ${i}) {
+  //       compressedImage = 
+  //           hex"${amt}";
+  //       compressedSize = ${len};
+  //     } 
+  //     `)
+
+  //   }
+  // });
+  it("gets SVG", async () => {
+    const renderer = GmRenderer__factory.connect(
+      (await deployments.get("GmRenderer")).address,
+      signer
+    );
+    const r = await renderer.getSvg(0);
+    console.log('result');
+    console.log(Buffer.from(r.substring(2), 'hex').toString('utf-8'));
   });
 });

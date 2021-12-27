@@ -2,11 +2,11 @@ import { NetworksUserConfig } from "hardhat/types";
 import "./setup-env";
 
 const networks: NetworksUserConfig = {
-  hardhat: {
-    gas: 100_000_000,
-    blockGasLimit: 100_000_000_000,
-    allowUnlimitedContractSize: true
-  }
+  // hardhat: {
+  //   gas: 100_000_000,
+  //   blockGasLimit: 100_000_000_000,
+  //   allowUnlimitedContractSize: true
+  // }
 };
 
 let accounts: any = [];

@@ -39,6 +39,7 @@
     "base64-sol": "^1.1.0",
     "gwei-slim-nft-contracts": "^1.0.3",
     "hardhat-deploy": "^0.8.11",
+    "pako": "^2.0.4",
     "prettier": "^2.5.1",
     "solidity-bytes-utils": "0.8.0",
     "typechain": "^5.1.2"
