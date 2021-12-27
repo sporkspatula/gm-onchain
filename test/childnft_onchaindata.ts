@@ -7,9 +7,14 @@ import { keccak256 } from "ethers/lib/utils";
 import { writeFile } from "fs/promises";
 import { join } from "path";
 // @ts-ignore
-import pako from 'pako';
+import pako from "pako";
 
-const deflate = (str: string) => [str.length,Buffer.from(pako.deflateRaw(Buffer.from(str, 'utf-8'), {level: 9})).toString('hex')]
+const deflate = (str: string) => [
+  str.length,
+  Buffer.from(
+    pako.deflateRaw(Buffer.from(str, "utf-8"), { level: 9 })
+  ).toString("hex"),
+];
 
 describe("Gm", () => {
   let signer: SignerWithAddress;
@@ -82,21 +87,24 @@ describe("Gm", () => {
   //     const [len, amt] = deflate(body);
   //     console.log(`
   //     if (index == ${i}) {
-  //       compressedImage = 
+  //       compressedImage =
   //           hex"${amt}";
   //       compressedSize = ${len};
-  //     } 
+  //     }
   //     `)
 
   //   }
   // });
-  it("gets SVG", async () => {
-    const renderer = GmRenderer__factory.connect(
-      (await deployments.get("GmRenderer")).address,
-      signer
-    );
-    const r = await renderer.getSvg(0);
-    console.log('result');
-    console.log(Buffer.from(r.substring(2), 'hex').toString('utf-8'));
-  });
+  // it.only("gets SVG", async () => {
+  //   const renderer = GmRenderer__factory.connect(
+  //     (await deployments.get("GmRenderer")).address,
+  //     signer
+  //   );
+  //   for (let i = 0; i < 11; i++) {
+  //     const r = await renderer.getSvg(i);
+  //     const data = Buffer.from(r.substring(2), "hex").toString("utf-8");
+  //     await writeFile(join(__dirname, `../ascii/${i}.svg.part`), data);
+  //     console.log('');
+  //   }
+  // });
 });

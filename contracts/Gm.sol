@@ -62,12 +62,13 @@ contract Gm is ERC721Delegated {
 
     function tokenURI(uint256 tokenId) public view returns (string memory) {
         string memory json;
-        bytes memory tokenData = renderer.svgRaw(tokenId, mintSeeds[tokenId]);
+        (bytes memory tokenData, bytes memory name) = renderer.svgRaw(tokenId, mintSeeds[tokenId]);
         json = Base64.encode(
             bytes(
                 string(
                     abi.encodePacked(
                         '{"name": "0x',
+                        name,
                         // Strings.toHexString(tokenId),
                         '", "description": "',
                         "no description",
