@@ -27,35 +27,56 @@ async function main() {
     a.sz > b.sz ? 1 : -1
   );
 
-
-
+  let template1 = "";
+  let template2 = "";
   for (let i = 0; i < sorted.length; i++) {
-    console.log(`"${sorted[i].name}"`,);
-  }
-
-  let template = "";
-  for (let i = 0; i < sorted.length; i++) {
-    template += `
+    if (i < 50) {
+      template1 += `
+    if (index == ${i}) {
+      compressedImage = hex"${sorted[i].hexBuf}";
+      compressedSize = ${sorted[i].sz};
+      imageName = "${sorted[i].name}";
+    }
+    `;
+    } else {
+      template2 += `
     if (index == ${i}) {
       compressedImage = hex"${sorted[i].hexBuf}";
       compressedSize = ${sorted[i].sz};
       imageName = "${sorted[i].name}";
     }
   `;
+    }
+
   }
 
-  const solidityPath = join(__dirname, "../contracts/GmData.sol");
-  const sourceFile = (await readFile(solidityPath)).toString('utf-8');
-  const START_TAG = "// AUTOGEN:START";
-  const start = sourceFile.substring(0, sourceFile.indexOf(START_TAG) + START_TAG.length);
-  const end = sourceFile.substring(
-    sourceFile.indexOf("// AUTOGEN:END"),
-    sourceFile.length
+    const solidityPath1 = join(__dirname, `../contracts/GmData1.sol`);
+    const sourceFile1 = (await readFile(solidityPath1)).toString('utf-8');
+    const START_TAG = "// AUTOGEN:START";
+    const start1 = sourceFile1.substring(0, sourceFile1.indexOf(START_TAG) + START_TAG.length);
+    const end1 = sourceFile1.substring(
+        sourceFile1.indexOf("// AUTOGEN:END"),
+        sourceFile1.length
+    );
+    if (!start1 || !end1) {
+      throw new Error('Start or end template tags missing in GmData1');
+    }
+    await writeFile(solidityPath1, [start1, template1, end1].join("\n"));
+
+  const solidityPath2 = join(__dirname, `../contracts/GmData2.sol`);
+  const sourceFile2 = (await readFile(solidityPath2)).toString('utf-8');
+  const start2 = sourceFile2.substring(0, sourceFile2.indexOf(START_TAG) + START_TAG.length);
+  const end2 = sourceFile2.substring(
+      sourceFile2.indexOf("// AUTOGEN:END"),
+      sourceFile2.length
   );
-  if (!start || !end) {
-    throw new Error('Start or end template tags missing');
+  if (!start2 || !end2) {
+    throw new Error('Start or end template tags missing in GmData2');
   }
-  await writeFile(solidityPath, [start, template, end].join("\n"));
+  await writeFile(solidityPath2, [start2, template2, end2].join("\n"));
+
+
+
 }
 
 main();
