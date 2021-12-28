@@ -14,11 +14,17 @@ module.exports = async ({ getNamedAccounts, deployments }: any) => {
     gmRendererAddress = (await deployments.get("GmRenderer")).address;
   }
 
-  await deploy("Gm", {
+  const deployResult = await deploy("Gm", {
     from: deployer,
     args: [baseAddress, gmRendererAddress, 1000],
     log: true,
   });
+
+  // console.log(
+  //     `contract Gm deployed at ${deployResult.contract.address} using ${deployResult.receipt.gasUsed} gas`
+  // );
+
+
 };
 module.exports.tags = ["Gm"];
-module.exports.dependencies = ["TestBase", "GmRenderer"];
+module.exports.dependencies = ["TestBase", "GmRenderer", "GmData1", "GmData2"];

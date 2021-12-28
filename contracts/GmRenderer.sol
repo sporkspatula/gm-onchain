@@ -11,13 +11,16 @@ interface IGmData {
 
 contract GmRenderer {
     ICorruptionsFont private immutable font;
-    IGmData private immutable gmData;
+    IGmData private immutable gmData1;
+    IGmData private immutable gmData2;
+
 
     bytes16 private constant _HEX_SYMBOLS = "0123456789abcdef";
 
-    constructor(address fontAddress, address gmDataAddress) {
+    constructor(address fontAddress, address gmData1Address, address gmData2Address) {
         font = ICorruptionsFont(fontAddress);
-        gmData = IGmData(gmDataAddress);
+        gmData1 = IGmData(gmData1Address);
+        gmData2 = IGmData(gmData2Address);
     }
 
     function svgRaw(uint256 tokenId, bytes32 seed)
@@ -29,9 +32,15 @@ contract GmRenderer {
         bytes3 fontColor = bytes3(seed << 24);
         uint32 random = uint32(bytes4(seed << 48));
 
-        uint256 mod = random % 50;
+        uint256 mod = random % 69;
 
-        (bytes memory inner, bytes memory name) = gmData.getSvg(mod);
+        bytes memory inner;
+        bytes memory name;
+        if (mod < 50) {
+            (inner, name) = gmData1.getSvg(mod);
+        } else {
+            (inner, name) = gmData2.getSvg(mod);
+        }
 
         return (
             abi.encodePacked(
