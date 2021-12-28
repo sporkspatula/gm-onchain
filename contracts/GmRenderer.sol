@@ -26,7 +26,7 @@ contract GmRenderer {
         gmData2 = gmData2Address;
     }
 
-    function decompressSvg(GmDataInterface.GmDataSet memory gmData)
+    function decompress(GmDataInterface.GmDataSet memory gmData)
         public
         pure
         returns (bytes memory, bytes memory)
@@ -39,7 +39,7 @@ contract GmRenderer {
     }
 
     function svgRaw(uint256 tokenId, bytes32 seed)
-        public
+        external
         view
         returns (bytes memory, bytes memory)
     {
@@ -52,9 +52,9 @@ contract GmRenderer {
         bytes memory inner;
         bytes memory name;
         if (mod < 50) {
-            (name, inner) = decompressSvg(gmData1.getSvg(mod));
+            (name, inner) = decompress(gmData1.getSvg(mod));
         } else {
-            (name, inner) = decompressSvg(gmData2.getSvg(mod));
+            (name, inner) = decompress(gmData2.getSvg(mod));
         }
 
         return (

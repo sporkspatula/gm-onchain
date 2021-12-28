@@ -9,7 +9,11 @@ import {AddressUpgradeable} from "@openzeppelin/contracts-upgradeable/utils/Addr
 import {GmRenderer} from "./GmRenderer.sol";
 import {Base64} from "base64-sol/base64.sol";
 
-/// This custom NFT contract stores additional metadata to use for tokenURI
+/**
+
+ASCII ART HERE
+
+ */
 contract Gm is ERC721Delegated {
     using CountersUpgradeable for CountersUpgradeable.Counter;
 
@@ -46,12 +50,17 @@ contract Gm is ERC721Delegated {
     }
 
     function mint(uint256 count) public payable {
-        require(currentTokenId.current() + count <= maxSupply, "gm, mint is sold out");
+        require(
+            currentTokenId.current() + count <= maxSupply,
+            "gm, mint is sold out"
+        );
         require(salePrice != 0, "Sale not started");
         require(msg.value == salePrice * count, "Wrong sale price");
 
         for (uint256 i = 0; i < count; i++) {
-            mintSeeds[currentTokenId.current()] = _generateSeed(currentTokenId.current());
+            mintSeeds[currentTokenId.current()] = _generateSeed(
+                currentTokenId.current()
+            );
             _mint(msg.sender, currentTokenId.current());
             currentTokenId.increment();
         }
@@ -86,7 +95,10 @@ contract Gm is ERC721Delegated {
 
     function tokenURI(uint256 tokenId) public view returns (string memory) {
         string memory json;
-        (bytes memory tokenData, bytes memory name) = renderer.svgRaw(tokenId, mintSeeds[tokenId]);
+        (bytes memory tokenData, bytes memory name) = renderer.svgRaw(
+            tokenId,
+            mintSeeds[tokenId]
+        );
         json = Base64.encode(
             bytes(
                 string(

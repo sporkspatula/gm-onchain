@@ -1,9 +1,6 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.9;
 
-import {InflateLib} from "./InflateLib.sol";
-
-
 contract CourierFont {
     // based off the very excellent PT Mono font
 
