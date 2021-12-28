@@ -44,11 +44,12 @@ describe("Gm", () => {
   });
 
   it("mints", async () => {
-    for (let i = 0; i <250; i++) {
-      await gm.mint();
-      console.log(`Minted ${i}`)
-
-    }
+    // for (let i = 0; i <250; i++) {
+      await gm.setSalePrice(1);
+      await gm.mint(250, {value: 250});
+      // console.log(`Minted ${i}`)
+// 
+    // }
 
     const imagesOut = new Array(250);
     for (let i = 0; i < 250; i++) {

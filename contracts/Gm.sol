@@ -59,6 +59,7 @@ contract Gm is ERC721Delegated {
             "gm, mint is sold out"
         );
         require(salePrice != 0, "Sale not started");
+        require(count <= 10, "10 max");
         require(msg.value == salePrice * count, "Wrong sale price");
 
         for (uint256 i = 0; i < count; i++) {
