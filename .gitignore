@@ -5,4 +5,5 @@ cache
 .DS_Store
 typechain
 .env
+.env.*
 .idea
