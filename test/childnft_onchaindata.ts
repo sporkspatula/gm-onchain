@@ -33,16 +33,6 @@ describe("Gm", () => {
     return svg;
   }
 
-  function getSeedAsciiMod(seed: string) {
-    // convert to bytes
-    // grab 4 bytes
-    const byteArr = ethers.utils.arrayify(seed);
-    const dataView = new DataView(byteArr.buffer, 6, 4);
-    const asciiInt = dataView.getUint32(0, true);
-    const asciiMod = asciiInt % 6;
-    return asciiMod;
-  }
-
   beforeEach(async () => {
     const { Gm } = await deployments.fixture(["ERC721Base", "Gm"]);
 
@@ -54,14 +44,14 @@ describe("Gm", () => {
   });
 
   it("mints", async () => {
-    for (let i = 0; i <10; i++) {
+    for (let i = 0; i <250; i++) {
       await gm.mint();
       console.log(`Minted ${i}`)
 
     }
 
-    const imagesOut = new Array(10);
-    for (let i = 0; i < 10; i++) {
+    const imagesOut = new Array(250);
+    for (let i = 0; i < 250; i++) {
       const svg = await getSvgFromTokenId(gm, i);
       console.log(`Fetched Token URI ${i}`)
       imagesOut[

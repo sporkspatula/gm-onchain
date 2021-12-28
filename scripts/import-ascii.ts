@@ -23,19 +23,28 @@ async function main() {
     results.push({ name, sz, hexBuf });
   }
 
-  console.log(results);
+  const sorted = results.sort((a,b) =>
+    a.sz > b.sz ? 1 : -1
+  );
+
+
+
+  for (let i = 0; i < sorted.length; i++) {
+    console.log(`"${sorted[i].name}"`,);
+  }
+
   let template = "";
-  for (let i = 0; i < results.length; i++) {
+  for (let i = 0; i < sorted.length; i++) {
     template += `
     if (index == ${i}) {
-      compressedImage = hex"${results[i].hexBuf}";
-      compressedSize = ${results[i].sz};
-      imageName = "${results[i].name}";
+      compressedImage = hex"${sorted[i].hexBuf}";
+      compressedSize = ${sorted[i].sz};
+      imageName = "${sorted[i].name}";
     }
   `;
   }
 
-  const solidityPath = join(__dirname, "../contracts/GMArtLib.sol");
+  const solidityPath = join(__dirname, "../contracts/GmData.sol");
   const sourceFile = (await readFile(solidityPath)).toString('utf-8');
   const START_TAG = "// AUTOGEN:START";
   const start = sourceFile.substring(0, sourceFile.indexOf(START_TAG) + START_TAG.length);

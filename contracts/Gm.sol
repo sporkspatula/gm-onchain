@@ -67,14 +67,13 @@ contract Gm is ERC721Delegated {
             bytes(
                 string(
                     abi.encodePacked(
-                        '{"name": "0x',
-                        name,
-                        // Strings.toHexString(tokenId),
-                        '", "description": "',
-                        "no description",
-                        '", "image": "',
+                        '{"description": "gm-onchain is a collection of 10,000 randomly generated, onchain ascii-art renditions of our favorite crypto phrase. enjoy.",',
+                        '"image": "',
                         svgBase64Data(tokenData),
-                        '"}'
+                        '", "attributes": [',
+                        '{"trait_type":"style","value":"',
+                        name,
+                        '"}]}'
                     )
                 )
             )
