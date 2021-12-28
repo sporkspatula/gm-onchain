@@ -25,14 +25,15 @@ contract GmRenderer {
         bytes3 fontColor = bytes3(seed << 24);
         uint32 random = uint32(bytes4(seed << 48));
 
-        uint256 mod = random % 12;
+        uint256 mod = random % 60;
 
         (bytes memory inner, bytes memory name) = GMArtLib.getSvg(mod);
 
         return (
             abi.encodePacked(
                 svgPreambleString(backgroundColor, fontColor),
-                inner
+                inner,
+                "</svg>"
             ),
             name
         );
@@ -62,16 +63,15 @@ contract GmRenderer {
     {
         return
             abi.encodePacked(
-                "<svg viewBox='0 0 1506 1024' width='1536' height='1024' xmlns='http://www.w3.org/2000/svg'>",
+                "<svg viewBox='0 0 640 640' width='640' height='640' xmlns='http://www.w3.org/2000/svg'>",
                 '<style> @font-face { font-family: CorruptionsFont; src: url("',
                 font.font(),
                 '") format("opentype"); } ',
                 ".base{fill:",
                 toHtmlHexString(uint256(uint24(fontColor))),
-                ";font-family:CorruptionsFont;font-size: 10px;} ",
+                ";font-family:CorruptionsFont;font-size: 16px;} ",
                 "</style>",
-                '<g transform="scale(4 4)">',
-                '<rect width="400" height="400" fill="',
+                '<rect width="100%" height="100%" fill="',
                 toHtmlHexString(uint256(uint24(backgroundColor))),
                 '" /> '
             );

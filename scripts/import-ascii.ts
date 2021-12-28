@@ -1,9 +1,9 @@
-const pako = require("pako");
-const { join } = require("path");
-const { writeFile, readFile, readdir } = require("fs/promises");
+import pako from "pako";
+import { join } from "path";
+import { writeFile, readFile, readdir } from "fs/promises";
 
 async function main() {
-  const deflate = (str) => [
+  const deflate = (str: string) => [
     str.length,
     Buffer.from(
       pako.deflateRaw(Buffer.from(str, "utf-8"), { level: 9 })
@@ -25,12 +25,12 @@ async function main() {
 
   console.log(results);
   let template = "";
-  for (let [indx, result] of results.entries()) {
+  for (let i = 0; i < results.length; i++) {
     template += `
-    if (index == ${indx}) {
-      compressedImage = hex"${result.hexBuf}";
-      compressedSize = ${result.sz};
-      imageName = "${result.name}";
+    if (index == ${i}) {
+      compressedImage = hex"${results[i].hexBuf}";
+      compressedSize = ${results[i].sz};
+      imageName = "${results[i].name}";
     }
   `;
   }
