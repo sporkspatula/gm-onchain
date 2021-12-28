@@ -44,16 +44,16 @@ describe("Gm", () => {
   });
 
   it("mints", async () => {
-    for (let i = 0; i <250; i++) {
-      await gm.mint();
-      console.log(`Minted ${i}`)
-
+    await gm.setSalePrice(1);
+    for (let i = 0; i < 25; i++) {
+      await gm.mint(10, { value: 10 });
+      console.log(`Minted ${i} * 10`);
     }
 
     const imagesOut = new Array(250);
     for (let i = 0; i < 250; i++) {
       const svg = await getSvgFromTokenId(gm, i);
-      console.log(`Fetched Token URI ${i}`)
+      console.log(`Fetched Token URI ${i}`);
       imagesOut[
         i
       ] = `<div style="width: 640px; height: 640px;background-image:url('data:image/svg+xml;base64,${Buffer.from(
