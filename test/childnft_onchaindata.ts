@@ -2,10 +2,19 @@ import { SignerWithAddress } from "@nomiclabs/hardhat-ethers/signers";
 import { expect } from "chai";
 import "@nomiclabs/hardhat-ethers";
 import { ethers, deployments } from "hardhat";
-import { ERC721Base, Gm, TestBase } from "../typechain";
+import { ERC721Base, Gm, GmRenderer__factory, TestBase } from "../typechain";
 import { keccak256 } from "ethers/lib/utils";
 import { writeFile } from "fs/promises";
 import { join } from "path";
+// @ts-ignore
+import pako from "pako";
+
+const deflate = (str: string) => [
+  str.length,
+  Buffer.from(
+    pako.deflateRaw(Buffer.from(str, "utf-8"), { level: 9 })
+  ).toString("hex"),
+];
 
 describe("Gm", () => {
   let signer: SignerWithAddress;
@@ -24,16 +33,6 @@ describe("Gm", () => {
     return svg;
   }
 
-  function getSeedAsciiMod(seed: string) {
-    // convert to bytes
-    // grab 4 bytes
-    const byteArr = ethers.utils.arrayify(seed);
-    const dataView = new DataView(byteArr.buffer, 6, 4);
-    const asciiInt = dataView.getUint32(0, true);
-    const asciiMod = asciiInt % 6;
-    return asciiMod;
-  }
-
   beforeEach(async () => {
     const { Gm } = await deployments.fixture(["ERC721Base", "Gm"]);
 
@@ -45,27 +44,57 @@ describe("Gm", () => {
   });
 
   it("mints", async () => {
-    for (let i = 0; i < 25; i++) {
+    for (let i = 0; i <250; i++) {
       await gm.mint();
+      console.log(`Minted ${i}`)
+
     }
 
-    const imagesOut = new Array(25);
-    for (let i = 0; i < 25; i++) {
+    const imagesOut = new Array(250);
+    for (let i = 0; i < 250; i++) {
       const svg = await getSvgFromTokenId(gm, i);
-      const seed = await gm.seed(i);
-      console.log(seed);
-      const mod = await getSeedAsciiMod(seed);
+      console.log(`Fetched Token URI ${i}`)
       imagesOut[
         i
-      ] = `<div style="width: 800px; height: 600px;background-image:url('data:image/svg+xml;base64,${Buffer.from(
+      ] = `<div style="width: 640px; height: 640px;background-image:url('data:image/svg+xml;base64,${Buffer.from(
         svg,
         "utf8"
       ).toString("base64")}"></div>`;
     }
 
-    const result = `<style>svg{margin:10px;}</style><div style="display: grid; grid-template-columns: repeat(2, 1fr);">${imagesOut.join(
+    const result = `<style>svg{margin:10px;}</style><div style="display: grid; grid-template-columns: repeat(10, 1fr);">${imagesOut.join(
       "\n"
     )}</div>`;
     await writeFile(join(__dirname, "./out.html"), result);
   });
+  // it.only("gets lines", async () => {
+  //   const renderer = GmRenderer__factory.connect(
+  //     (await deployments.get("GmRenderer")).address,
+  //     signer
+  //   );
+  //   for (let i = 0; i < 12; i++) {
+  //     const body = await renderer.svgBody(i);
+  //     const [len, amt] = deflate(body);
+  //     console.log(`
+  //     if (index == ${i}) {
+  //       compressedImage =
+  //           hex"${amt}";
+  //       compressedSize = ${len};
+  //     }
+  //     `)
+
+  //   }
+  // });
+  // it.only("gets SVG", async () => {
+  //   const renderer = GmRenderer__factory.connect(
+  //     (await deployments.get("GmRenderer")).address,
+  //     signer
+  //   );
+  //   for (let i = 0; i < 11; i++) {
+  //     const r = await renderer.getSvg(i);
+  //     const data = Buffer.from(r.substring(2), "hex").toString("utf-8");
+  //     await writeFile(join(__dirname, `../ascii/${i}.svg.part`), data);
+  //     console.log('');
+  //   }
+  // });
 });

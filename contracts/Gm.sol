@@ -5,7 +5,8 @@ import {IBaseERC721Interface, ConfigSettings} from "gwei-slim-nft-contracts/cont
 import {ERC721Delegated} from "gwei-slim-nft-contracts/contracts/base/ERC721Delegated.sol";
 
 import {CountersUpgradeable} from "@openzeppelin/contracts-upgradeable/utils/CountersUpgradeable.sol";
-import {GmRenderer} from './GmRenderer.sol';
+import {GmRenderer} from "./GmRenderer.sol";
+import {Base64} from "base64-sol/base64.sol";
 
 /// This custom NFT contract stores additional metadata to use for tokenURI
 contract Gm is ERC721Delegated {
@@ -45,17 +46,47 @@ contract Gm is ERC721Delegated {
         _burn(tokenId);
     }
 
-    function tokenURI(uint256 tokenId) external view returns (string memory) {
-        bytes32 seed = mintSeeds[tokenId];
-        return renderer.tokenURI(tokenId, seed);
+    function svgBase64Data(bytes memory data)
+        internal
+        pure
+        returns (string memory)
+    {
+        return
+            string(
+                abi.encodePacked(
+                    "data:image/svg+xml;base64,",
+                    Base64.encode(data)
+                )
+            );
+    }
+
+    function tokenURI(uint256 tokenId) public view returns (string memory) {
+        string memory json;
+        (bytes memory tokenData, bytes memory name) = renderer.svgRaw(tokenId, mintSeeds[tokenId]);
+        json = Base64.encode(
+            bytes(
+                string(
+                    abi.encodePacked(
+                        '{"description": "gm-onchain is a collection of 10,000 randomly generated, onchain ascii-art renditions of our favorite crypto phrase. enjoy.",',
+                        '"image": "',
+                        svgBase64Data(tokenData),
+                        '", "attributes": [',
+                        '{"trait_type":"style","value":"',
+                        name,
+                        '"}]}'
+                    )
+                )
+            )
+        );
+        return string(abi.encodePacked("data:application/json;base64,", json));
     }
 
     function seed(uint256 tokenId) external view returns (bytes32) {
         return mintSeeds[tokenId];
     }
 
-    function _generateSeed(uint256 tokenId) private returns(bytes32) {
-        return keccak256(abi.encodePacked(block.timestamp, msg.sender, tokenId));
+    function _generateSeed(uint256 tokenId) private returns (bytes32) {
+        return
+            keccak256(abi.encodePacked(block.timestamp, msg.sender, tokenId));
     }
-
 }
