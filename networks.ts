@@ -3,9 +3,9 @@ import "./setup-env";
 
 const networks: NetworksUserConfig = {
   hardhat: {
-    gas: 100_000_000,
-    blockGasLimit: 100_000_000_000,
-    allowUnlimitedContractSize: true
+    // gas: 100_000_000,
+    // blockGasLimit: 100_000_000_000,
+    // allowUnlimitedContractSize: true
   }
 };
 

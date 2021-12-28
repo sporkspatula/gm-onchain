@@ -5,15 +5,19 @@ import {IBaseERC721Interface, ConfigSettings} from "gwei-slim-nft-contracts/cont
 import {ERC721Delegated} from "gwei-slim-nft-contracts/contracts/base/ERC721Delegated.sol";
 
 import {CountersUpgradeable} from "@openzeppelin/contracts-upgradeable/utils/CountersUpgradeable.sol";
+import {AddressUpgradeable} from "@openzeppelin/contracts-upgradeable/utils/AddressUpgradeable.sol";
 import {GmRenderer} from "./GmRenderer.sol";
 import {Base64} from "base64-sol/base64.sol";
 
 /// This custom NFT contract stores additional metadata to use for tokenURI
 contract Gm is ERC721Delegated {
-    uint256 public currentTokenId;
-    uint256 public maxSupply;
+    using CountersUpgradeable for CountersUpgradeable.Counter;
+
+    CountersUpgradeable.Counter private currentTokenId;
+    uint256 public immutable maxSupply;
+    uint256 public salePrice;
     GmRenderer public renderer;
-    mapping(uint256 => bytes32) mintSeeds;
+    mapping(uint256 => bytes32) private mintSeeds;
 
     constructor(
         address baseFactory,
@@ -36,14 +40,34 @@ contract Gm is ERC721Delegated {
         maxSupply = _maxSupply;
     }
 
-    function mint() public {
-        require(currentTokenId < maxSupply, "gm, mint is sold out");
-        mintSeeds[currentTokenId] = _generateSeed(currentTokenId);
-        _mint(msg.sender, currentTokenId++);
+    // price = 0 == sale not started
+    function setSalePrice(uint256 newPrice) public onlyOwner {
+        salePrice = newPrice;
+    }
+
+    function mint(uint256 count) public payable {
+        require(currentTokenId.current() + count <= maxSupply, "gm, mint is sold out");
+        require(salePrice != 0, "Sale not started");
+        require(msg.value == salePrice * count, "Wrong sale price");
+
+        for (uint256 i = 0; i < count; i++) {
+            mintSeeds[currentTokenId.current()] = _generateSeed(currentTokenId.current());
+            _mint(msg.sender, currentTokenId.current());
+            currentTokenId.increment();
+        }
     }
 
     function burn(uint256 tokenId) public {
+        require(_isApprovedOrOwner(msg.sender, tokenId), "Not allowed");
         _burn(tokenId);
+    }
+
+    /**
+      @dev This withdraws ETH from the contract to the contract owner.
+     */
+    function withdraw() external onlyOwner {
+        // No need for gas limit to trusted address.
+        AddressUpgradeable.sendValue(payable(_owner()), address(this).balance);
     }
 
     function svgBase64Data(bytes memory data)
@@ -85,7 +109,7 @@ contract Gm is ERC721Delegated {
         return mintSeeds[tokenId];
     }
 
-    function _generateSeed(uint256 tokenId) private returns (bytes32) {
+    function _generateSeed(uint256 tokenId) private view returns (bytes32) {
         return
             keccak256(abi.encodePacked(block.timestamp, msg.sender, tokenId));
     }

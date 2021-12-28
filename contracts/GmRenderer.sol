@@ -1,26 +1,41 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.9;
 
+import {InflateLib} from "./InflateLib.sol";
+
+import {GmDataInterface} from "./GmDataInterface.sol";
+
 interface ICorruptionsFont {
     function font() external view returns (string memory);
 }
 
-interface IGmData {
-    function getSvg(uint256 tokenId) external view returns (bytes memory, bytes memory);
-}
-
 contract GmRenderer {
     ICorruptionsFont private immutable font;
-    IGmData private immutable gmData1;
-    IGmData private immutable gmData2;
-
+    GmDataInterface private immutable gmData1;
+    GmDataInterface private immutable gmData2;
 
     bytes16 private constant _HEX_SYMBOLS = "0123456789abcdef";
 
-    constructor(address fontAddress, address gmData1Address, address gmData2Address) {
-        font = ICorruptionsFont(fontAddress);
-        gmData1 = IGmData(gmData1Address);
-        gmData2 = IGmData(gmData2Address);
+    constructor(
+        ICorruptionsFont fontAddress,
+        GmDataInterface gmData1Address,
+        GmDataInterface gmData2Address
+    ) {
+        font = fontAddress;
+        gmData1 = gmData1Address;
+        gmData2 = gmData2Address;
+    }
+
+    function decompressSvg(GmDataInterface.GmDataSet memory gmData)
+        public
+        pure
+        returns (bytes memory, bytes memory)
+    {
+        (, bytes memory inflated) = InflateLib.puff(
+            gmData.compressedImage,
+            gmData.compressedSize
+        );
+        return (gmData.imageName, inflated);
     }
 
     function svgRaw(uint256 tokenId, bytes32 seed)
@@ -37,9 +52,9 @@ contract GmRenderer {
         bytes memory inner;
         bytes memory name;
         if (mod < 50) {
-            (inner, name) = gmData1.getSvg(mod);
+            (name, inner) = decompressSvg(gmData1.getSvg(mod));
         } else {
-            (inner, name) = gmData2.getSvg(mod);
+            (name, inner) = decompressSvg(gmData2.getSvg(mod));
         }
 
         return (
