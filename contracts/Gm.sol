@@ -49,6 +49,10 @@ contract Gm is ERC721Delegated {
         salePrice = newPrice;
     }
 
+    function mintsLeft() external view returns (uint256) {
+        return maxSupply - currentTokenId.current();
+    }
+
     function mint(uint256 count) public payable {
         require(
             currentTokenId.current() + count <= maxSupply,
