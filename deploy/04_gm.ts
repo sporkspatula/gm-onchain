@@ -16,7 +16,7 @@ module.exports = async ({ getNamedAccounts, deployments }: any) => {
 
   const deployResult = await deploy("Gm", {
     from: deployer,
-    args: [baseAddress, gmRendererAddress, 1000],
+    args: [baseAddress, gmRendererAddress, 6969],
     log: true,
   });
 
