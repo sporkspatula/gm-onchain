@@ -26,6 +26,7 @@ describe("Gm", () => {
     const tokenURI = await gm.tokenURI(tokenId);
     const [_, base64Uri] = tokenURI.split(",");
     const buff = Buffer.from(base64Uri, "base64");
+    console.log(buff.toString("utf-8"))
     const decoded = JSON.parse(buff.toString("utf-8"));
     const [__, svgBase64] = decoded.image.split(",");
     const svgBuff = Buffer.from(svgBase64, "base64");
@@ -45,13 +46,13 @@ describe("Gm", () => {
 
   it("mints", async () => {
     await gm.setSalePrice(1);
-    for (let i = 0; i < 25; i++) {
+    for (let i = 0; i < 5; i++) {
       await gm.mint(10, { value: 10 });
       console.log(`Minted ${i} * 10`);
     }
 
-    const imagesOut = new Array(250);
-    for (let i = 0; i < 250; i++) {
+    const imagesOut = new Array(50);
+    for (let i = 0; i < 50; i++) {
       const svg = await getSvgFromTokenId(gm, i);
       console.log(`Fetched Token URI ${i}`);
       imagesOut[
