@@ -52,11 +52,8 @@ contract GmRenderer {
         uint32 hue2 = uint32(bytes4(seed << 32)) % 360;
         uint32 s1 = (uint32(bytes4(seed << 64)) % 89) + 22;
         uint32 s2 = (uint32(bytes4(seed << 96)) % 98) + 22;
-
         uint32 high = (uint32(bytes4(seed << 128))) % 2;
-
-
-        uint32 lightnessAddend = ((uint32(bytes4(seed << 128))) % 20);
+        uint32 lightnessAddend = ((uint32(bytes4(seed << 160))) % 20);
 
         uint32 lightness1;
         if (high == 0) {
@@ -76,6 +73,7 @@ contract GmRenderer {
         returns (bytes memory, bytes memory)
     {
 
+        // first 24 bytes used to construct hsl
         Hsl memory hsl = _getHsl(seed);
         uint32 style = uint32(bytes4(seed << 192)) % 69;
 
