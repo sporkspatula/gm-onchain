@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { css } from "@emotion/css";
 import { useMachine } from "@xstate/react";
 import { assign, createMachine } from "xstate";
@@ -6,6 +6,7 @@ import { Disclaimer } from "./Disclaimer";
 import { Intro } from "./Intro";
 import * as styles from "./styles";
 import { WalletStatus } from "./WalletStatus";
+import { RenderGm } from "./RenderGm";
 
 const range = (n: number) => [...Array(n).keys()];
 
@@ -14,6 +15,8 @@ const mintMachine = createMachine({
   type: "parallel",
   context: {
     mintCount: 0,
+    info: undefined,
+    mintIDs: [],
   },
   states: {
     loading: {
@@ -21,6 +24,11 @@ const mintMachine = createMachine({
         shown: {},
       },
       initial: "shown",
+      on: {
+        INIT_COUNT: {
+          actions: [assign({ mintCount: (_, evt) => (evt as any).value })],
+        },
+      },
     },
     sayback: {
       states: {
@@ -29,6 +37,7 @@ const mintMachine = createMachine({
         complete: {},
       },
       on: {
+        INIT_COUNT: "sayback.shown",
         LOAD_COMPLETED: "sayback.shown",
         SAY_BACK_COMPLETE: "sayback.complete",
       },
@@ -42,13 +51,15 @@ const mintMachine = createMachine({
       },
       initial: "hidden",
       on: {
+        INIT_COUNT: "disclaimer.complete",
         SAY_BACK_COMPLETE: "disclaimer.shown",
         DISCLAIMER_TYPED: "disclaimer.complete",
         SET_MINT_COUNT: {
           target: "connectWallet.shown",
-          actions: [
-            assign({ mintCount: (context, evt) => (evt as any).value }),
-          ],
+          actions: [assign({ mintCount: (_, evt) => (evt as any).value })],
+        },
+        UPDATE_INFO: {
+          actions: [assign({ info: (_, evt) => (evt as any).value })],
         },
       },
     },
@@ -56,29 +67,54 @@ const mintMachine = createMachine({
       states: {
         shown: {},
         hidden: {},
+        showMintButton: {},
+        minting: {},
+        minted: {},
         complete: {},
       },
       initial: "hidden",
-      on: {},
+      on: {
+        WALLET_CONNECT_TYPED: "connectWallet.showMintButton",
+        INIT_COUNT: "connectWallet.showMintButton",
+        MINTING: "connectWallet.minting",
+        MINTED: "connectWallet.minted",
+        NEW_MINT_ID: {
+          target: "connectWallet.minted",
+          actions: [
+            assign({
+              mintIDs: (context, evt) => [
+                ...(context as any).mintIDs,
+                (evt as any).value,
+              ],
+            }),
+          ],
+        },
+      },
     },
   },
 });
 
 export const Page = () => {
   const [state, send] = useMachine(mintMachine);
-
   const [back, setBack] = useState("");
-
   const atState = state.value as any;
 
-  console.log({ atState, ctx: state.context });
+  console.log(state, atState);
+
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search.substring(1));
+    if (params.get("count")) {
+      const count = parseInt(params.get("count"));
+      send("INIT_COUNT", { value: count });
+    }
+  }, []);
 
   return (
     <div className={styles.wrapper}>
       <Intro send={send} />
       {atState.sayback !== "hidden" && (
-        <div className={styles.textLink}>
-          <input
+        <div>
+          {/* <input
             className={styles.cleanInput}
             disabled={atState.sayback === "complete"}
             autoFocus={true}
@@ -89,7 +125,7 @@ export const Page = () => {
               }
             }}
             value={back}
-          />
+          /> */}
           {atState.sayback !== "complete" && (
             <button
               className={css([styles.flowButton, styles.buttonOptional])}
@@ -122,7 +158,21 @@ export const Page = () => {
         </>
       )}
       {atState.connectWallet !== "hidden" && (
-        <WalletStatus count={state.context.mintCount} send={send} />
+        <WalletStatus
+          state={atState.connectWallet}
+          info={state.context.info}
+          count={state.context.mintCount}
+          send={send}
+        />
+      )}
+      {atState.connectWallet === "minted" && (
+        <div>
+          MINTED!
+          <br />{" "}
+          {state.context.mintIDs.map((id) => (
+            <RenderGm gmId={id} key={id} />
+          ))}
+        </div>
       )}
     </div>
   );

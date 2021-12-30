@@ -2,7 +2,7 @@ import Typist from "react-typist";
 import * as styles from './styles';
 
 export const Intro = ({ send }) => (
-  <Typist avgTypingDelay={32} stdTypingDelay={18} onTypingDone={() => send("LOAD_COMPLETED")}>
+  <Typist avgTypingDelay={12} stdTypingDelay={8} onTypingDone={() => send("LOAD_COMPLETED")}>
     <div className={styles.gmBox}>
       <div className={styles.textLink}>
         &#x000A0;&#x000A0;&#x000A0;__&#x000A0;&#x000A0;&#x000A0;&#x000A0;___&#x000A0;___&#x000A0;&#x000A0;

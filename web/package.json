@@ -4,7 +4,8 @@
   "license": "MIT",
   "scripts": {
     "dev": "parcel index.html",
-    "build": "parcel build index.html"
+    "build": "parcel build index.html",
+    "clean": "rm -rf ./.parcel-cache ./dist"
   },
   "dependencies": {
     "@emotion/css": "^11.7.1",
@@ -12,6 +13,7 @@
     "@types/react-dom": "^17.0.11",
     "@xstate/react": "^1.6.3",
     "@zoralabs/simple-wallet-provider": "^0.1.1",
+    "dotenv": "^10.0.0",
     "ethers": "^5.5.2",
     "parcel": "^2.0.1",
     "react": "^17.0.2",

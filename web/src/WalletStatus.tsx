@@ -8,10 +8,20 @@ import {
 import { useState, useEffect, useCallback, ChangeEvent } from "react";
 import { formatEther } from "@ethersproject/units";
 import { Gm__factory } from "./typechain/factories/Gm__factory";
+import { TestBase__factory } from "./typechain/factories/TestBase__factory";
+import { BigNumber, ethers } from "ethers";
 
-const GM_ADDRESS = "0xDa30EaC642599989DE8aE3a3AE1669382a65BC60";
+const GM_ADDRESS = process.env.CONTRACT_ADDRESS;
 
-export const WalletStatus = ({ send, count }) => {
+const ButtonPrompts = {
+  shown: "mint",
+  minting: "minting",
+  minted: "mint again",
+  hidden: "",
+  showMintButton: "mint",
+};
+
+export const WalletStatus = ({ state, send, count, info }: any) => {
   const { active, account, library } = useWeb3Wallet();
   const { openModal, buttonAction } = useWalletButton();
   const [mint, setMint] = useState<string>();
@@ -25,40 +35,63 @@ export const WalletStatus = ({ send, count }) => {
     };
   }, []);
 
-  const doMint = useCallback(async () => {
-    try {
-      setError("");
-      const signer = await library.getSigner();
-      const factory = new Gm__factory(signer).attach(GM_ADDRESS);
-      const mintTxn = await factory.mint(count);
-      // set state minting
-      const hasConfirmed = await mintTxn.wait(5);
-      // set state confirmed
-    } catch (e: any) {
-      console.log("error", e.error, e.error.message);
-      if (e.error.message) {
-        setError(e.error.message);
-      } else {
-        setError(e.toString());
+  const doMint = useCallback(() => {
+    (async () => {
+      try {
+        setError("");
+        const signer = await library.getSigner();
+        const factory = new Gm__factory(signer).attach(GM_ADDRESS);
+        const baseContract = new TestBase__factory(signer).attach(GM_ADDRESS);
+        const mintTxn = await factory.mint(count, {
+          value: info.salePrice * count,
+        });
+        baseContract.on(
+          "Transfer",
+          (from: string, to: string, tokenId: BigNumber) => {
+            console.log({ from, to, tokenId, account });
+            if (from === ethers.constants.AddressZero && to === account) {
+              send("NEW_MINT_ID", { value: tokenId.toNumber() });
+            }
+          }
+        );
+        send("MINTING");
+        // set state minting
+        await mintTxn.wait(1);
+        send("MINTED");
+        // set state confirmed
+      } catch (e: any) {
+        if (e?.error?.message) {
+          setError(e.error.message);
+        } else {
+          setError(e.message || e.toString());
+        }
       }
-    }
-  }, [library]);
+    })();
+  }, [library, account, send, setError]);
 
-  const [balance, setBalance] = useState<string>("???");
+  const [balance, setBalance] = useState<BigNumber | undefined>();
 
   const getBalance = useCallback(async () => {
     const balance = await library.getBalance(account);
-    setBalance(formatEther(balance));
+    setBalance(balance);
   }, [library, account]);
 
   useEffect(() => {
     if (!active) {
       openModal();
     } else {
-      setBalance("???");
+      setBalance(undefined);
       getBalance();
     }
   }, [active]);
+
+  if (!info) {
+    return (
+      <div>
+        <div className={styles.textLink}>...</div>
+      </div>
+    );
+  }
 
   if (!active) {
     return (
@@ -73,7 +106,7 @@ export const WalletStatus = ({ send, count }) => {
     );
   }
 
-  if (balance === "???") {
+  if (balance === undefined) {
     return (
       <div className={styles.textLink} key={account}>
         loading...
@@ -83,7 +116,10 @@ export const WalletStatus = ({ send, count }) => {
 
   return (
     <>
-      <Typist onTypingDone={() => send("WALLET_CONNECT_TYPED")}>
+      <Typist
+        key={`${count}-${account}`}
+        onTypingDone={() => send("WALLET_CONNECT_TYPED")}
+      >
         <div className={styles.textLink} key={account}>
           you've connected wallet {account}
         </div>
@@ -92,22 +128,21 @@ export const WalletStatus = ({ send, count }) => {
             connect a different wallet
           </button>
         </div>
-        <div className={styles.textLink} key={`${balance}`}>
-          your wallet has {balance} ETH
+        <div className={styles.textLink} key={`${balance.toString()}`}>
+          your wallet has {formatEther(balance)} ETH
         </div>
         <div className={styles.textLink} key={count.toString()}>
-          you need {(0.042 * count).toString()} ETH to mint {count.toString()}{" "}
-          gms.
+          you need {formatEther(info.salePrice.mul(BigNumber.from(count)))} ETH
+          to mint {count.toString()} gms.
         </div>
-        <div className={styles.textLink} key={`${balance}-${count}`}>
-          {0.042 * count < parseFloat(balance)
+        <div className={styles.textLink} key={`${balance.toString()}-${count}`}>
+          {info.salePrice.mul(BigNumber.from(count)).lt(balance)
             ? "you have enough eth"
             : "you need more eth"}
         </div>
-        <div className={styles.textLink}>type mint to confirm</div>
 
-        <div className={styles.textLink}>
-          <input
+        <div className={styles.textLink} key="mint-button">
+          {/* <input
             className={styles.cleanInput}
             disabled={mint === "mint"}
             autoFocus={true}
@@ -118,19 +153,25 @@ export const WalletStatus = ({ send, count }) => {
               }
             }}
             value={mint}
-          />
-          <button
-            className={css([styles.flowButton, styles.buttonOptional])}
-            onClick={() => doMint()}
-          >
-            mint!
-          </button>
+          /> */}
         </div>
       </Typist>
-      {error && (
-        <div className={styles.textLink} key={error}>
-          {error}
-        </div>
+      {(state === "showMintButton" || state === "minting") && (
+        <>
+          <button
+            key="mint-button-actual"
+            className={css([styles.flowButton, styles.buttonOptional])}
+            disabled={state === "minting"}
+            onClick={() => doMint()}
+          >
+            {ButtonPrompts[state]}
+          </button>
+          {error && (
+            <div className={styles.textLink} key={error}>
+              Error! {error}
+            </div>
+          )}
+        </>
       )}
     </>
   );
