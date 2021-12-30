@@ -14,9 +14,12 @@ module.exports = async ({ getNamedAccounts, deployments }: any) => {
     gmRendererAddress = (await deployments.get("GmRenderer")).address;
   }
 
+  const maxSupply = process.env.GM_MAX_SUPPLY;
+  console.log("GM MAX SUPPLY", maxSupply)
+
   const deployResult = await deploy("Gm", {
     from: deployer,
-    args: [baseAddress, gmRendererAddress, 6969],
+    args: [baseAddress, gmRendererAddress, maxSupply],
     log: true,
   });
 

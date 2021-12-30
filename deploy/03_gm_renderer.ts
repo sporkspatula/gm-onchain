@@ -12,11 +12,11 @@ module.exports = async ({ getNamedAccounts, deployments }: any) => {
 
     if (!gmData1Address) {
         gmData1Address = (await deployments.get("GmData1")).address;
-        console.log(`GmData1 Address: ${gmData1Address}`)
+        //console.log(`GmData1 Address: ${gmData1Address}`)
     }
     if (!gmData2Address) {
         gmData2Address = (await deployments.get("GmData2")).address;
-        console.log(`GmData1 Address: ${gmData1Address}`)
+        //console.log(`GmData1 Address: ${gmData1Address}`)
     }
 
     try {
