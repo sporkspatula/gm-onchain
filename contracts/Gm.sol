@@ -3,7 +3,7 @@ pragma solidity 0.8.9;
 
 import {IBaseERC721Interface, ConfigSettings} from "gwei-slim-nft-contracts/contracts/base/ERC721Base.sol";
 import {ERC721Delegated} from "gwei-slim-nft-contracts/contracts/base/ERC721Delegated.sol";
-
+import {StringsUpgradeable} from "@openzeppelin/contracts-upgradeable/utils/StringsUpgradeable.sol";
 import {CountersUpgradeable} from "@openzeppelin/contracts-upgradeable/utils/CountersUpgradeable.sol";
 import {AddressUpgradeable} from "@openzeppelin/contracts-upgradeable/utils/AddressUpgradeable.sol";
 import {GmRenderer} from "./GmRenderer.sol";
@@ -108,8 +108,10 @@ contract Gm is ERC721Delegated {
             bytes(
                 string(
                     abi.encodePacked(
-                        '{"description": "gm-onchain is a collection of 10,000 randomly generated, onchain ascii-art renditions of our favorite crypto phrase. enjoy.",',
-                        '"image": "',
+                        '{"description": "gm onchain is a collection of 10,000 randomly generated, onchain ascii-art renditions of our favorite crypto phrase. enjoy.",',
+                        '"title": "gm ',
+                        StringsUpgradeable.toString(tokenId),
+                        '", "image": "',
                         svgBase64Data(tokenData),
                         '", "attributes": [',
                         '{"trait_type":"style","value":"',

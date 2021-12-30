@@ -60,7 +60,7 @@ async function generateAscii() {
         "Slant Relief",
         "Bear",
         "Ghost",
-        "Big Money-ne",
+        "Big Money-nw",
         "Georgi16",
         "Reverse",
         "Flower Power",

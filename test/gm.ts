@@ -147,28 +147,27 @@ describe("Gm", () => {
     })
   });
 
-  // it("mints", async () => {
-  //   await gm.setSalePrice(1);
-  //   for (let i = 0; i < 25; i++) {
-  //     await gm.mint(10, { value: 10 });
-  //     console.log(`Minted ${i} * 10`);
-  //   }
-  //
-  //   const imagesOut = new Array(250);
-  //   for (let i = 0; i < 250; i++) {
-  //     const svg = await getSvgFromTokenId(gm, i);
-  //     console.log(`Fetched Token URI ${i}`);
-  //     imagesOut[
-  //         i
-  //         ] = `<div style="width: 640px; height: 640px;background-image:url('data:image/svg+xml;base64,${Buffer.from(
-  //         svg,
-  //         "utf8"
-  //     ).toString("base64")}"></div>`;
-  //   }
-  //
-  //   const result = `<style>svg{margin:10px;}</style><div style="display: grid; grid-template-columns: repeat(10, 1fr);">${imagesOut.join(
-  //       "\n"
-  //   )}</div>`;
-  //   await writeFile(join(__dirname, "./out.html"), result);
-  // });
+  it("integration-mints", async () => {
+    await gm.setSalePrice(1);
+    for (let i = 0; i < 10; i++) {
+      await gm.mint(10, { value: 10 });
+      console.log(`Minted ${i} * 10`);
+    }
+
+    const imagesOut = new Array(100);
+    for (let i = 0; i < 100; i++) {
+      const svg = await getSvgFromTokenId(gm, i);
+      imagesOut[
+          i
+          ] = `<div style="width: 640px; height: 640px;background-image:url('data:image/svg+xml;base64,${Buffer.from(
+          svg,
+          "utf8"
+      ).toString("base64")}"></div>`;
+    }
+
+    const result = `<style>svg{margin:10px;}</style><div style="display: grid; grid-template-columns: repeat(10, 1fr);">${imagesOut.join(
+        "\n"
+    )}</div>`;
+    await writeFile(join(__dirname, "./out.html"), result);
+  });
 });

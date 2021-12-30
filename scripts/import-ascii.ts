@@ -33,17 +33,17 @@ async function main() {
     if (i < 50) {
       template1 += `
     if (index == ${i}) {
-      compressedImage = hex"${sorted[i].hexBuf}";
-      compressedSize = ${sorted[i].sz};
-      imageName = "${sorted[i].name}";
+      data.compressedImage = hex"${sorted[i].hexBuf}";
+      data.compressedSize = ${sorted[i].sz};
+      data.imageName = "${sorted[i].name}";
     }
     `;
     } else {
       template2 += `
     if (index == ${i}) {
-      compressedImage = hex"${sorted[i].hexBuf}";
-      compressedSize = ${sorted[i].sz};
-      imageName = "${sorted[i].name}";
+      data.compressedImage = hex"${sorted[i].hexBuf}";
+      data.compressedSize = ${sorted[i].sz};
+      data.imageName = "${sorted[i].name}";
     }
   `;
     }
