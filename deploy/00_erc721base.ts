@@ -8,7 +8,7 @@ module.exports = async ({ getNamedAccounts, deployments}: any) => {
       args: [],
       log: true,
     });
-    console.log(deployResult)
+    // console.log(deployResult)
     // if (deployResult.newlyDeployed) {
     //   console.log(
     //       `contract ERC721 Base deployed at ${deployResult.contract.address} using ${deployResult.receipt.gasUsed} gas`

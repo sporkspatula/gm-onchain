@@ -50,8 +50,8 @@ contract GmRenderer {
     function _getHsl(bytes32 seed) pure internal returns (Hsl memory) {
         uint32 hue1 = uint32(bytes4(seed)) % 360;
         uint32 hue2 = uint32(bytes4(seed << 32)) % 360;
-        uint32 s1 = (uint32(bytes4(seed << 64)) % 89) + 22;
-        uint32 s2 = (uint32(bytes4(seed << 96)) % 98) + 22;
+        uint32 s1 = (uint32(bytes4(seed << 64)) % 88) + 22;
+        uint32 s2 = (uint32(bytes4(seed << 96)) % 88) + 22;
         uint32 high = (uint32(bytes4(seed << 128))) % 2;
         uint32 lightnessAddend = ((uint32(bytes4(seed << 160))) % 20);
 

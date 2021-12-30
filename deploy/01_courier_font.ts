@@ -8,7 +8,7 @@ module.exports = async ({ getNamedAccounts, deployments}: any) => {
             args: [],
             log: true,
         });
-        console.log(deployResult)
+        // console.log(deployResult)
         // console.log(
         //     `contract Courier Font deployed at ${deployResult.contract.address} using ${deployResult.receipt.gasUsed} gas`
         // );
