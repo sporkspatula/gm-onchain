@@ -4,7 +4,7 @@
   "license": "MIT",
   "scripts": {
     "dev": "parcel index.html",
-    "build": "parcel build index.html",
+    "build": "parcel build index.html --dist-dir ./public",
     "clean": "rm -rf ./.parcel-cache ./dist"
   },
   "dependencies": {
