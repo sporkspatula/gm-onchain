@@ -1,0 +1,27 @@
+{
+  "name": "gm-onchain-web",
+  "version": "1.0.0",
+  "license": "MIT",
+  "scripts": {
+    "dev": "parcel index.html",
+    "build": "parcel build index.html --dist-dir ./public",
+    "clean": "rm -rf ./.parcel-cache ./dist"
+  },
+  "dependencies": {
+    "@emotion/css": "^11.7.1",
+    "@ethersproject/units": "^5.5.0",
+    "@types/react-dom": "^17.0.11",
+    "@xstate/react": "^1.6.3",
+    "@zoralabs/simple-wallet-provider": "^0.1.1",
+    "dotenv": "^10.0.0",
+    "ethers": "^5.5.2",
+    "parcel": "^2.0.1",
+    "react": "^17.0.2",
+    "react-dom": "^17.0.2",
+    "react-typist": "^2.0.5",
+    "tslib": "^2.3.1",
+    "typed.js": "^2.0.12",
+    "typescript": "^4.5.4",
+    "xstate": "^4.26.1"
+  }
+}
