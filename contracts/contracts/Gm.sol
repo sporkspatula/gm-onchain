@@ -22,6 +22,7 @@ contract Gm is ERC721Delegated {
     uint256 public salePrice;
     GmRenderer public renderer;
     mapping(uint256 => bytes32) private mintSeeds;
+    mapping(uint256 => bool) private hasHadCoffee;
     event DrankCoffee(uint256 indexed tokenId, address indexed actor);
 
     constructor(
@@ -46,8 +47,8 @@ contract Gm is ERC721Delegated {
     }
 
     function drinkCoffee(uint256 tokenId) public {
-        require(_isApprovedOrOwner(msg.sender), "Needs to own");
-        require(!hasHasCoffee[tokenId], "Already had coffee");
+        require(_isApprovedOrOwner(msg.sender, tokenId), "Needs to own");
+        require(!hasHadCoffee[tokenId], "Already had coffee");
         mintSeeds[tokenId] = _generateSeed(tokenId);
         emit DrankCoffee(tokenId, msg.sender);
     }
