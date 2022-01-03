@@ -22,6 +22,7 @@ contract Gm is ERC721Delegated {
     uint256 public salePrice;
     GmRenderer public renderer;
     mapping(uint256 => bytes32) private mintSeeds;
+    event DrankCoffee(uint256 indexed tokenId, address indexed actor);
 
     constructor(
         address baseFactory,
@@ -44,6 +45,13 @@ contract Gm is ERC721Delegated {
         maxSupply = _maxSupply;
     }
 
+    function drinkCoffee(uint256 tokenId) public {
+        require(_isApprovedOrOwner(msg.sender), "Needs to own");
+        require(!hasHasCoffee[tokenId], "Already had coffee");
+        mintSeeds[tokenId] = _generateSeed(tokenId);
+        emit DrankCoffee(tokenId, msg.sender);
+    }
+
     // price = 0 == sale not started
     function setSalePrice(uint256 newPrice) public onlyOwner {
         salePrice = newPrice;
@@ -54,10 +62,7 @@ contract Gm is ERC721Delegated {
     }
 
     function mint(uint256 count) public payable {
-        require(
-            currentTokenId.current() + count <= maxSupply,
-            "Gm: sold out"
-        );
+        require(currentTokenId.current() + count <= maxSupply, "Gm: sold out");
         require(salePrice != 0, "Gm: sale not started");
         require(count <= 10, "Gm: cannot mint more than 10 in one transaction");
         require(msg.value == salePrice * count, "Gm: wrong sale price");
@@ -72,7 +77,10 @@ contract Gm is ERC721Delegated {
     }
 
     function burn(uint256 tokenId) public {
-        require(_isApprovedOrOwner(msg.sender, tokenId), "Gm: only approved or owner can burn");
+        require(
+            _isApprovedOrOwner(msg.sender, tokenId),
+            "Gm: only approved or owner can burn"
+        );
         _burn(tokenId);
     }
 
