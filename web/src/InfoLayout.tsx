@@ -73,7 +73,7 @@ export const InfoLayout = ({ children }: any) => (
           </a>
         </li>
         <li>
-          <a href="/faq.html">faq</a>
+          <a href="/faq">faq</a>
         </li>
         <li>
           <a
