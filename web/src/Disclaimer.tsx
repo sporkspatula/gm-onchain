@@ -37,20 +37,18 @@ export const Disclaimer = ({ send }) => {
       </div>
       <div className={styles.textLink}>
         {" "}
-        and (maybe?) access to future mints
+        and (maybe?) access to future mints (follow <a href="https://twitter.com/gm__onchain" target="_blank" onClick={() => window.open('https://twitter.com/gm__onchain')}>@gm__onchain for updates</a>)
       </div>
       <div className={styles.textLink}>
         each mint costs{" "}
         <strong>
-          {info?.salePrice ? formatEther(info.salePrice) : "0.069"}
+          {info?.salePrice && info.salePrice !== '0' ? formatEther(info.salePrice) : "0.069"}
         </strong>{" "}
         eth with a total supply of{" "}
         <strong>{info?.maxSupply.toString() || "?"}</strong> gms.
       </div>
     </div>
   );
-
-  console.log(info, NETWORK_ID)
 
   if (info === undefined) {
     return <div className={styles.textLink}>...</div>;
@@ -61,7 +59,7 @@ export const Disclaimer = ({ send }) => {
       <Typist>
         {mintInfo}
         <div className={styles.textLink}>
-          mint is not open yet. please follow our twitter for updates
+          mint is not open yet. please follow our <a onClick={() => window.open('https://twitter.com/gm__onchain')} href="https://twitter.com/gm__onchain" target="_blank">@gm__onchain for updates</a>
         </div>
       </Typist>
     );

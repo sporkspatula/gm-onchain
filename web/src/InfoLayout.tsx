@@ -22,7 +22,7 @@ export const InfoLayout = ({ children }: any) => (
         padding-bottom: 8px;
         text-align: right;
       }
-      @media only screen and (max-width: 500px) {
+      @media only screen and (max-width: 600px) {
         grid-template-areas:
           "mint mint"
           "mint mint"
