@@ -62,7 +62,7 @@ export const InfoLayout = ({ children }: any) => (
             target="_blank"
             href={`https://${
               NETWORK_ID === "1" ? "www" : "rinkeby"
-            }.etherscan.io/${CONTRACT_ADDRESS}`}
+            }.etherscan.io/address/${CONTRACT_ADDRESS}`}
           >
             contract
           </a>
