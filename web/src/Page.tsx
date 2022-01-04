@@ -8,14 +8,21 @@ import { WalletStatus } from "./WalletStatus";
 import { RenderGm } from "./RenderGm";
 import { mintMachine } from "./machine";
 
-const range = (n: number) => [...Array(n).keys()];
+const range = (n: number) => {
+  const out = [];
+  for (let i = 0; i < n; i++) {
+    out.push(i);
+  }
+  return out;
+  // [...Array(n).keys()];
+};
 
-export const Page = ({tokens}: any) => {
+export const Page = ({ tokens }: any) => {
   const [state, send] = useMachine(mintMachine);
   const [back, setBack] = useState("");
   const atState = state.value as any;
-  
-  console.log({atState})
+
+  console.log({ atState });
 
   useEffect(() => {
     const params = new URLSearchParams(window.location.search.substring(1));
