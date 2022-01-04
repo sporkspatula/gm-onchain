@@ -22,13 +22,14 @@ export default function Home({ tokens }: { tokens: any }) {
 }
 
 export const getStaticProps: GetStaticProps = async () => {
-  const fetchAgent = new MediaFetchAgent(NETWORK_ID as NetworkIDs);
-  const contractAddress = GM_CONTRACT;
-  const tokens = await FetchStaticData.fetchZoraIndexerList(fetchAgent, {
-    collectionAddresses: [contractAddress],
-    limit: 40,
-    offset: 0,
-  });
+  // const fetchAgent = new MediaFetchAgent(NETWORK_ID as NetworkIDs);
+  // const contractAddress = GM_CONTRACT;
+  // const tokens = await FetchStaticData.fetchZoraIndexerList(fetchAgent, {
+  //   collectionAddresses: [contractAddress],
+  //   limit: 40,
+  //   offset: 0,
+  // });
+  const tokens = [];
 
   return {
     props: {
