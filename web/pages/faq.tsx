@@ -30,8 +30,9 @@ export default function FAQ({}: any) {
           }
         `}
       >
-        <h2>FAQ</h2>
-        <p>CONTENT</p>
+        <h1>FAQ</h1>
+        <h3>"CONTENT"</h3>
+        <h3>"SOON"</h3>
       </div>
     </>
   );
