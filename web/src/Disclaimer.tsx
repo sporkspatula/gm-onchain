@@ -59,7 +59,7 @@ export const Disclaimer = ({ send }) => {
       <Typist>
         {mintInfo}
         <div className={styles.textLink}>
-          mint is not open yet. please follow our <a onClick={() => window.open('https://twitter.com/gm__onchain')} href="https://twitter.com/gm__onchain" target="_blank">@gm__onchain for updates</a>
+          mint is not open yet. please follow <a onClick={() => window.open('https://twitter.com/gm__onchain')} href="https://twitter.com/gm__onchain" target="_blank">@gm__onchain for updates</a>
         </div>
       </Typist>
     );

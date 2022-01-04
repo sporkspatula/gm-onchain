@@ -71,7 +71,7 @@ export const InfoLayout = ({ children }: any) => (
           </li>
         )}
         <li>
-          <a href="https://" target="_blank">
+          <a href="https://twitter.com/gm__onchain" target="_blank">
             twitter
           </a>
         </li>
