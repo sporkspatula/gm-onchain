@@ -58,7 +58,7 @@ export const InfoLayout = ({ children }: any) => (
           display: block;
         `}
       >
-        {CONTRACT_ADDRESS != ethers.constants.AddressZero && (
+        {CONTRACT_ADDRESS !== ethers.constants.AddressZero && (
           <li>
             <a
               target="_blank"
@@ -78,7 +78,7 @@ export const InfoLayout = ({ children }: any) => (
         <li>
           <a href="/faq">faq</a>
         </li>
-        {CONTRACT_ADDRESS != ethers.constants.AddressZero && (
+        {CONTRACT_ADDRESS !== ethers.constants.AddressZero && (
           <li>
             <a
               href={`https://${
