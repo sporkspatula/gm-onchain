@@ -14,15 +14,9 @@ contract GmRenderer {
     GmDataInterface private immutable gmData1;
     GmDataInterface private immutable gmData2;
 
-    bytes16 private constant _HEX_SYMBOLS = "0123456789abcdef";
-
-    struct Hsl {
-        uint32 h1;
-        uint32 s1;
-        uint32 l1;
-        uint32 h2;
-        uint32 s2;
-        uint32 l2;
+    struct Color {
+        bytes hexNum;
+        bytes name;
     }
 
     constructor(
@@ -47,35 +41,61 @@ contract GmRenderer {
         return (gmData.imageName, inflated);
     }
 
-    function _getHsl(bytes32 seed) pure internal returns (Hsl memory) {
-        uint32 hue1 = uint32(bytes4(seed)) % 360;
-        uint32 hue2 = uint32(bytes4(seed << 32)) % 360;
-        uint32 s1 = (uint32(bytes4(seed << 64)) % 88) + 22;
-        uint32 s2 = (uint32(bytes4(seed << 96)) % 88) + 22;
-        uint32 high = (uint32(bytes4(seed << 128))) % 2;
-        uint32 lightnessAddend = ((uint32(bytes4(seed << 160))) % 20);
-
-        uint32 lightness1;
-        if (high == 0) {
-            lightness1 = 20 + lightnessAddend;
-        } else {
-            lightness1 = 60 + lightnessAddend;
+    function _getFilter(uint index) pure internal returns (bytes memory) {
+        if (index == 0) {
+            return 'noise';
         }
 
+        if (index == 1) {
+            return 'lit';
+        }
 
-        uint32 lightness2 = 100 - lightness1;
-        return Hsl(hue1, s1, lightness1, hue2, s2, lightness2);
+        if (index == 2) {
+            return 'displacementFilter';
+        }
+
+        if (index == 3) {
+            return 'fractal';
+        }
+
+        if (index == 4) {
+            return 'glow';
+        }
+
+        if (index == 5) {
+            return 'morph';
+        }
+
+        return 'none';
     }
 
-    function svgRaw(uint256 tokenId, bytes32 seed)
+    function _getColors(bytes32 seed) pure internal returns (Color memory bgColor, Color memory fontColor) {
+        uint32 bgRand = uint32(bytes4(seed)) % 111;
+        uint32 fontJitter = uint32(bytes4(seed << 32)) % 5;
+        uint32 fontOperation = uint8(bytes1(seed << 64)) % 2;
+        uint32 fontRand;
+        if (fontOperation == 0) {
+            fontRand  = (bgRand + (55 + fontJitter)) % 111;
+        } else {
+            fontRand = (bgRand + (55 - fontJitter)) % 111;
+        }
+
+        return (_getColor(bgRand), _getColor(fontRand));
+    }
+
+    function svgRaw(bytes32 seed)
         external
         view
-        returns (bytes memory, bytes memory)
+        returns (bytes memory, bytes memory, bytes memory, bytes memory, bytes memory)
     {
 
         // first 24 bytes used to construct hsl
-        Hsl memory hsl = _getHsl(seed);
+        //Hsl memory hsl = _getHsl(seed)
+        uint32 filterRand = uint32(bytes4(seed << 65)) % 100;
+        bytes memory filter = _getFilter(filterRand);
         uint32 style = uint32(bytes4(seed << 192)) % 69;
+
+        (Color memory bgColor, Color memory fontColor) = _getColors(seed);
 
         bytes memory inner;
         bytes memory name;
@@ -87,32 +107,601 @@ contract GmRenderer {
 
         return (
             abi.encodePacked(
-                svgPreambleString(hsl),
+                svgPreambleString(bgColor.hexNum, fontColor.hexNum, filter),
                 inner,
                 "</svg>"
             ),
-            name
+            name,
+            bgColor.name,
+            fontColor.name,
+            filter
         );
     }
 
-    function svgPreambleString(Hsl memory hsl)
+    function svgFilterDefs() private view returns (bytes memory) {
+        return abi.encodePacked('<defs><filter id="fractal" filterUnits="objectBoundingBox" x="0%" y="0%" width="100%" height="100%" ><feTurbulence id="turbulence" type="fractalNoise" baseFrequency="0.03" numOctaves="1" ><animate attributeName="baseFrequency" values="0.01;0.4;0.01" dur="100s" repeatCount="indefinite" /></feTurbulence><feDisplacementMap in="SourceGraphic" scale="50"></feDisplacementMap></filter><filter id="morph"><feMorphology operator="dilate" radius="0"><animate attributeName="radius" values="0;5;0" dur="8s" repeatCount="indefinite" /></feMorphology></filter><filter id="glow" filterUnits="objectBoundingBox" x="0%" y="0%" width="100%" height="100%" ><feGaussianBlur stdDeviation="5" result="blur2" in="SourceGraphic" /><feMerge><feMergeNode in="blur2" /><feMergeNode in="SourceGraphic" /></feMerge></filter><filter id="noise"><feTurbulence baseFrequency="0.05"/><feColorMatrix type="hueRotate" values="0"><animate attributeName="values" from="0" to="360" dur="1s" repeatCount="indefinite"/></feColorMatrix><feColorMatrix type="matrix" values="0 0 0 0 1 0 0 0 0 0 0 0 0 0 0 1 0 0 0 0"/><feDisplacementMap in="SourceGraphic" scale="10"/></filter><filter id="none"><feOffset></feOffset></filter><filter id="displacementFilter"><feTurbulence type="turbulence" baseFrequency="0.05" numOctaves="2" result="turbulence"/><feDisplacementMap in2="turbulence" in="SourceGraphic" scale="50" xChannelSelector="R" yChannelSelector="G"/></filter><filter id="tile" x="10" y="10" width="10%" height="10%"><feTile in="SourceGraphic" x="10" y="10" width="10" height="10" /><feTile/></filter><filter id = "lit" x="-10" y="-10" width="640" height="640"><feTurbulence type="turbulence" baseFrequency="0.01" numOctaves="2" result="turbulence"/><feComposite in="SourceGraphic" in2="specOut" operator="arithmetic" k1="0" k2="1" k3="1" k4="0"/></filter></defs>');
+    }
+
+    function svgPreambleString(bytes memory bgColor, bytes memory fontColor, bytes memory filter)
         private
         view
         returns (bytes memory)
     {
 
-        string memory hsl1 = string(abi.encodePacked('hsl(', StringsUpgradeable.toString(hsl.h1), ',', StringsUpgradeable.toString(hsl.s1), '%,', StringsUpgradeable.toString(hsl.l1), '%)'));
-        string memory hsl2 = string(abi.encodePacked('hsl(', StringsUpgradeable.toString(hsl.h2), ',', StringsUpgradeable.toString(hsl.s2), '%,', StringsUpgradeable.toString(hsl.l2), '%)'));
-
         return
             abi.encodePacked(
                 "<svg viewBox='0 0 640 640' xmlns='http://www.w3.org/2000/svg'><style> @font-face { font-family: CourierFont; src: url('",
                 font.font(),
-                "') format('opentype'); } .base{fill:",
-                hsl1,
+                "') format('opentype'); }",
+                svgFilterDefs(),
+                ".base{filter:url(#",
+                filter,
+                ");fill:",
+                fontColor,
                 ';font-family:CourierFont;font-size: 16px;}</style><rect width="100%" height="100%" fill="',
-                hsl2,
+                bgColor,
                 '" /> '
             );
+    }
+
+    function _getColor(uint32 index) pure internal returns(Color memory color) {
+        // AUTOGEN:START
+
+        if (index == 0) {
+            color.hexNum = "#000000";
+            color.name = "Black";
+        }
+        
+        if (index == 1) {
+            color.hexNum = "#004c6a";
+            color.name = "Navy Dark Blue";
+        }
+        
+        if (index == 2) {
+            color.hexNum = "#0098d4";
+            color.name = "Bayern Blue";
+        }
+        
+        if (index == 3) {
+            color.hexNum = "#00e436";
+            color.name = "Lexaloffle Green";
+        }
+        
+        if (index == 4) {
+            color.hexNum = "#1034a6";
+            color.name = "Egyptian Blue";
+        }
+        
+        if (index == 5) {
+            color.hexNum = "#008811";
+            color.name = "Lush Garden";
+        }
+        
+        if (index == 6) {
+            color.hexNum = "#06d078";
+            color.name = "Underwater Fern";
+        }
+        
+        if (index == 7) {
+            color.hexNum = "#1c1cf0";
+            color.name = "Bluebonnet";
+        }
+        
+        if (index == 8) {
+            color.hexNum = "#127453";
+            color.name = "Green Velvet";
+        }
+        
+        if (index == 9) {
+            color.hexNum = "#14bab4";
+            color.name = "Super Rare Jade";
+        }
+        
+        if (index == 10) {
+            color.hexNum = "#111122";
+            color.name = "Corbeau";
+        }
+        
+        if (index == 11) {
+            color.hexNum = "#165d95";
+            color.name = "Lapis Jewel";
+        }
+        
+        if (index == 12) {
+            color.hexNum = "#16b8f3";
+            color.name = "Zima Blue";
+        }
+        
+        if (index == 13) {
+            color.hexNum = "#1ef876";
+            color.name = "Synthetic Spearmint";
+        }
+        
+        if (index == 14) {
+            color.hexNum = "#214fc6";
+            color.name = "New Car";
+        }
+        
+        if (index == 15) {
+            color.hexNum = "#249148";
+            color.name = "Paperboy's Lawn";
+        }
+        
+        if (index == 16) {
+            color.hexNum = "#24da91";
+            color.name = "Reptile Green";
+        }
+        
+        if (index == 17) {
+            color.hexNum = "#223311";
+            color.name = "Darkest Forest";
+        }
+        
+        if (index == 18) {
+            color.hexNum = "#297f6d";
+            color.name = "Mermaid Sea";
+        }
+        
+        if (index == 19) {
+            color.hexNum = "#22cccc";
+            color.name = "Mermaid Net";
+        }
+        
+        if (index == 20) {
+            color.hexNum = "#2e2249";
+            color.name = "Elderberry";
+        }
+        
+        if (index == 21) {
+            color.hexNum = "#326ab1";
+            color.name = "Dover Straits";
+        }
+        
+        if (index == 22) {
+            color.hexNum = "#2bc51b";
+            color.name = "Felwood Leaves";
+        }
+        
+        if (index == 23) {
+            color.hexNum = "#391285";
+            color.name = "Pixie Powder";
+        }
+        
+        if (index == 24) {
+            color.hexNum = "#2e58e8";
+            color.name = "Veteran's Day Blue";
+        }
+        
+        if (index == 25) {
+            color.hexNum = "#419f59";
+            color.name = "Chateau Green";
+        }
+        
+        if (index == 26) {
+            color.hexNum = "#45e9c1";
+            color.name = "Aphrodite Aqua";
+        }
+        
+        if (index == 27) {
+            color.hexNum = "#424330";
+            color.name = "Garden Path";
+        }
+        
+        if (index == 28) {
+            color.hexNum = "#429395";
+            color.name = "Catalan";
+        }
+        
+        if (index == 29) {
+            color.hexNum = "#44dd00";
+            color.name = "Magic Blade";
+        }
+        
+        if (index == 30) {
+            color.hexNum = "#432e6f";
+            color.name = "Her Highness";
+        }
+        
+        if (index == 31) {
+            color.hexNum = "#4477dd";
+            color.name = "Andrea Blue";
+        }
+        
+        if (index == 32) {
+            color.hexNum = "#5ad33e";
+            color.name = "Verdant Fields";
+        }
+        
+        if (index == 33) {
+            color.hexNum = "#3a18b1";
+            color.name = "Indigo Blue";
+        }
+        
+        if (index == 34) {
+            color.hexNum = "#556611";
+            color.name = "Forestial Outpost";
+        }
+        
+        if (index == 35) {
+            color.hexNum = "#55bb88";
+            color.name = "Bleached Olive";
+        }
+        
+        if (index == 36) {
+            color.hexNum = "#5500ee";
+            color.name = "Tezcatlipoca Blue";
+        }
+        
+        if (index == 37) {
+            color.hexNum = "#545554";
+            color.name = "Carbon Copy";
+        }
+        
+        if (index == 38) {
+            color.hexNum = "#58a0bc";
+            color.name = "Dupain";
+        }
+        
+        if (index == 39) {
+            color.hexNum = "#55ff22";
+            color.name = "Traffic Green";
+        }
+        
+        if (index == 40) {
+            color.hexNum = "#5b3e90";
+            color.name = "Daisy Bush";
+        }
+        
+        if (index == 41) {
+            color.hexNum = "#6688ff";
+            color.name = "Deep Denim";
+        }
+        
+        if (index == 42) {
+            color.hexNum = "#61e160";
+            color.name = "Lightish Green";
+        }
+        
+        if (index == 43) {
+            color.hexNum = "#6a31ca";
+            color.name = "Sagat Purple";
+        }
+        
+        if (index == 44) {
+            color.hexNum = "#667c3e";
+            color.name = "Military Green";
+        }
+        
+        if (index == 45) {
+            color.hexNum = "#68c89d";
+            color.name = "Intense Jade";
+        }
+        
+        if (index == 46) {
+            color.hexNum = "#6d1008";
+            color.name = "Chestnut Brown";
+        }
+        
+        if (index == 47) {
+            color.hexNum = "#696374";
+            color.name = "Purple Punch";
+        }
+        
+        if (index == 48) {
+            color.hexNum = "#6fb7e0";
+            color.name = "Life Force";
+        }
+        
+        if (index == 49) {
+            color.hexNum = "#770044";
+            color.name = "Dawn of the Fairies";
+        }
+        
+        if (index == 50) {
+            color.hexNum = "#7851a9";
+            color.name = "Royal Lavender";
+        }
+        
+        if (index == 51) {
+            color.hexNum = "#769c18";
+            color.name = "Luminescent Green";
+        }
+        
+        if (index == 52) {
+            color.hexNum = "#7be892";
+            color.name = "Ragweed";
+        }
+        
+        if (index == 53) {
+            color.hexNum = "#703be7";
+            color.name = "Bluish Purple";
+        }
+        
+        if (index == 54) {
+            color.hexNum = "#7b8b5d";
+            color.name = "Sage Leaves";
+        }
+        
+        if (index == 55) {
+            color.hexNum = "#82d9c5";
+            color.name = "Tender Turquoise";
+        }
+        
+        if (index == 56) {
+            color.hexNum = "#7e2530";
+            color.name = "Scarlet Shade";
+        }
+        
+        if (index == 57) {
+            color.hexNum = "#83769c";
+            color.name = "Voxatron Purple";
+        }
+        
+        if (index == 58) {
+            color.hexNum = "#88cc00";
+            color.name = "Fabulous Frog";
+        }
+        
+        if (index == 59) {
+            color.hexNum = "#881166";
+            color.name = "Possessed Purple";
+        }
+        
+        if (index == 60) {
+            color.hexNum = "#8756e4";
+            color.name = "Gloomy Purple";
+        }
+        
+        if (index == 61) {
+            color.hexNum = "#93b13d";
+            color.name = "Green Tea Ice Cream";
+        }
+        
+        if (index == 62) {
+            color.hexNum = "#90fda9";
+            color.name = "Foam Green";
+        }
+        
+        if (index == 63) {
+            color.hexNum = "#914b13";
+            color.name = "Parasite Brown";
+        }
+        
+        if (index == 64) {
+            color.hexNum = "#919c81";
+            color.name = "Whispering Willow";
+        }
+        
+        if (index == 65) {
+            color.hexNum = "#99eeee";
+            color.name = "Freezy Breezy";
+        }
+        
+        if (index == 66) {
+            color.hexNum = "#983d53";
+            color.name = "Algae Red";
+        }
+        
+        if (index == 67) {
+            color.hexNum = "#9c87c1";
+            color.name = "Petrified Purple";
+        }
+        
+        if (index == 68) {
+            color.hexNum = "#98da2c";
+            color.name = "Effervescent Lime";
+        }
+        
+        if (index == 69) {
+            color.hexNum = "#942193";
+            color.name = "Acai Juice";
+        }
+        
+        if (index == 70) {
+            color.hexNum = "#a675fe";
+            color.name = "Purple Illusionist";
+        }
+        
+        if (index == 71) {
+            color.hexNum = "#a4c161";
+            color.name = "Jungle Juice";
+        }
+        
+        if (index == 72) {
+            color.hexNum = "#aa00cc";
+            color.name = "Ferocious Fuchsia";
+        }
+        
+        if (index == 73) {
+            color.hexNum = "#a85e39";
+            color.name = "Earthen Jug";
+        }
+        
+        if (index == 74) {
+            color.hexNum = "#aaa9a4";
+            color.name = "Ellie Grey";
+        }
+        
+        if (index == 75) {
+            color.hexNum = "#aaee11";
+            color.name = "Glorious Green Glitter";
+        }
+        
+        if (index == 76) {
+            color.hexNum = "#ad4379";
+            color.name = "Mystic Maroon";
+        }
+        
+        if (index == 77) {
+            color.hexNum = "#b195e4";
+            color.name = "Dreamy Candy Forest";
+        }
+        
+        if (index == 78) {
+            color.hexNum = "#b1dd52";
+            color.name = "Conifer";
+        }
+        
+        if (index == 79) {
+            color.hexNum = "#c034af";
+            color.name = "Pink Perennial";
+        }
+        
+        if (index == 80) {
+            color.hexNum = "#b78727";
+            color.name = "University of California Gold";
+        }
+        
+        if (index == 81) {
+            color.hexNum = "#b9d08b";
+            color.name = "Young Leaves";
+        }
+        
+        if (index == 82) {
+            color.hexNum = "#bb11ee";
+            color.name = "Promiscuous Pink";
+        }
+        
+        if (index == 83) {
+            color.hexNum = "#c06960";
+            color.name = "Tapestry Red";
+        }
+        
+        if (index == 84) {
+            color.hexNum = "#bebbc9";
+            color.name = "Silverberry";
+        }
+        
+        if (index == 85) {
+            color.hexNum = "#bf0a30";
+            color.name = "Old Glory Red";
+        }
+        
+        if (index == 86) {
+            color.hexNum = "#c35b99";
+            color.name = "Llilacquered";
+        }
+        
+        if (index == 87) {
+            color.hexNum = "#caa906";
+            color.name = "Christmas Gold";
+        }
+        
+        if (index == 88) {
+            color.hexNum = "#c2f177";
+            color.name = "Cucumber Milk";
+        }
+        
+        if (index == 89) {
+            color.hexNum = "#d648d7";
+            color.name = "Pinkish Purple";
+        }
+        
+        if (index == 90) {
+            color.hexNum = "#cf9346";
+            color.name = "Fleshtone Shade Wash";
+        }
+        
+        if (index == 91) {
+            color.hexNum = "#d3e0b1";
+            color.name = "Rockmelon Rind";
+        }
+        
+        if (index == 92) {
+            color.hexNum = "#d22d1d";
+            color.name = "Pure Red";
+        }
+        
+        if (index == 93) {
+            color.hexNum = "#d28083";
+            color.name = "Galah";
+        }
+        
+        if (index == 94) {
+            color.hexNum = "#d5c7e8";
+            color.name = "Foggy Love";
+        }
+        
+        if (index == 95) {
+            color.hexNum = "#db1459";
+            color.name = "Rubylicious";
+        }
+        
+        if (index == 96) {
+            color.hexNum = "#dd66bb";
+            color.name = "Pink Charge";
+        }
+        
+        if (index == 97) {
+            color.hexNum = "#e2b227";
+            color.name = "Gold Tips";
+        }
+        
+        if (index == 98) {
+            color.hexNum = "#ee0099";
+            color.name = "Love Vessel";
+        }
+        
+        if (index == 99) {
+            color.hexNum = "#dd55ff";
+            color.name = "Flaming Flamingo";
+        }
+        
+        if (index == 100) {
+            color.hexNum = "#eda367";
+            color.name = "Adventure Orange";
+        }
+        
+        if (index == 101) {
+            color.hexNum = "#e9f1d0";
+            color.name = "Yellowish White";
+        }
+        
+        if (index == 102) {
+            color.hexNum = "#ef3939";
+            color.name = "Vivaldi Red";
+        }
+        
+        if (index == 103) {
+            color.hexNum = "#e78ea5";
+            color.name = "Underwater Flare";
+        }
+        
+        if (index == 104) {
+            color.hexNum = "#eedd11";
+            color.name = "Yellow Buzzing";
+        }
+        
+        if (index == 105) {
+            color.hexNum = "#ee2277";
+            color.name = "Furious Fuchsia";
+        }
+        
+        if (index == 106) {
+            color.hexNum = "#f075e6";
+            color.name = "Lian Hong Lotus Pink";
+        }
+        
+        if (index == 107) {
+            color.hexNum = "#f7c34c";
+            color.name = "Creamy Sweet Corn";
+        }
+        
+        if (index == 108) {
+            color.hexNum = "#fc0fc0";
+            color.name = "CGA Pink";
+        }
+        
+        if (index == 109) {
+            color.hexNum = "#ff6622";
+            color.name = "Sparrows Fire";
+        }
+        
+        if (index == 110) {
+            color.hexNum = "#fbaf8d";
+            color.name = "Orange Grove";
+        }
+        
+// AUTOGEN:END
     }
 }
