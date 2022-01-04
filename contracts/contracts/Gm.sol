@@ -100,10 +100,22 @@ contract Gm is ERC721Delegated {
 
     function tokenURI(uint256 tokenId) public view returns (string memory) {
         string memory json;
-        (bytes memory tokenData, bytes memory name) = renderer.svgRaw(
+        (bytes memory tokenData, bytes memory name, bytes memory bgColor, bytes memory fontColor, bytes memory filter) = renderer.svgRaw(
             tokenId,
             mintSeeds[tokenId]
         );
+
+        bytes memory attributes = abi.encodePacked('"attributes": [',
+            '{"trait_type":"style","value":"',
+            name,
+            '"},{"trait_type":"bgColor","value":"',
+            bgColor,
+            '"},{"trait_type":"fontColor","value":"',
+            fontColor,
+            '"},{"trait_type":"filter","value":"',
+            filter,
+            '"}]');
+
         json = Base64.encode(
             bytes(
                 string(
@@ -113,10 +125,9 @@ contract Gm is ERC721Delegated {
                         StringsUpgradeable.toString(tokenId),
                         '", "image": "',
                         svgBase64Data(tokenData),
-                        '", "attributes": [',
-                        '{"trait_type":"style","value":"',
-                        name,
-                        '"}]}'
+                        '",',
+                        attributes,
+                        '}'
                     )
                 )
             )

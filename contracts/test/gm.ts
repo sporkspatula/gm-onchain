@@ -154,8 +154,8 @@ describe("Gm", () => {
       console.log(`Minted ${i} * 10`);
     }
 
-    const imagesOut = new Array(100);
-    for (let i = 0; i < 100; i++) {
+    const imagesOut = new Array(10);
+    for (let i = 0; i < 10; i++) {
       const svg = await getSvgFromTokenId(gm, i);
       imagesOut[
           i
