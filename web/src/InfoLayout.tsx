@@ -1,4 +1,5 @@
 import { css } from "@emotion/css";
+import { ethers } from "ethers";
 import { CONTRACT_ADDRESS, NETWORK_ID } from "./env-vars";
 
 export const InfoLayout = ({ children }: any) => (
@@ -57,16 +58,18 @@ export const InfoLayout = ({ children }: any) => (
           display: block;
         `}
       >
-        <li>
-          <a
-            target="_blank"
-            href={`https://${
-              NETWORK_ID === "1" ? "www" : "rinkeby"
-            }.etherscan.io/address/${CONTRACT_ADDRESS}`}
-          >
-            contract
-          </a>
-        </li>
+        {CONTRACT_ADDRESS != ethers.constants.AddressZero && (
+          <li>
+            <a
+              target="_blank"
+              href={`https://${
+                NETWORK_ID === "1" ? "www" : "rinkeby"
+              }.etherscan.io/address/${CONTRACT_ADDRESS}`}
+            >
+              contract
+            </a>
+          </li>
+        )}
         <li>
           <a href="https://" target="_blank">
             twitter
@@ -75,15 +78,17 @@ export const InfoLayout = ({ children }: any) => (
         <li>
           <a href="/faq">faq</a>
         </li>
-        <li>
-          <a
-            href={`https://${
-              NETWORK_ID === "1" ? "" : "rinkeby."
-            }zora.co/collections/${CONTRACT_ADDRESS}`}
-          >
-            mints on zora
-          </a>
-        </li>
+        {CONTRACT_ADDRESS != ethers.constants.AddressZero && (
+          <li>
+            <a
+              href={`https://${
+                NETWORK_ID === "1" ? "" : "rinkeby."
+              }zora.co/collections/${CONTRACT_ADDRESS}`}
+            >
+              mints on zora
+            </a>
+          </li>
+        )}
       </ul>
     </div>
     <footer
