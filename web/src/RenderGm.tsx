@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState } from "react";
-import { getQueryContract } from "./eth-utils";
+import { getQueryContract } from "./get-query-contract";
 import { css } from "@emotion/css";
 
 export const RenderGm = ({ gmId }: { gmId: number }) => {

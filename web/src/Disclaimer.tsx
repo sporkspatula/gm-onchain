@@ -1,22 +1,27 @@
 import { useCallback, useEffect, useState } from "react";
 import Typist from "react-typist";
-import { getQueryContract } from "./eth-utils";
+import { getMintInfo, getQueryContract } from "./get-query-contract";
 import * as styles from "./styles";
 import { formatEther } from "@ethersproject/units";
+import { css } from "@emotion/css";
+import { NETWORK_ID } from "./env-vars";
 
 export const Disclaimer = ({ send }) => {
   const [info, setInfo] = useState<any>(undefined);
+  console.log({info})
   const getPrice = useCallback(async () => {
-    const queryContract = getQueryContract();
-    const [maxSupply, mintsLeft, salePrice] = await Promise.all([
-      queryContract.maxSupply(),
-      queryContract.mintsLeft(),
-      queryContract.salePrice(),
-    ]);
-    const newInfo = { maxSupply, mintsLeft, salePrice };
-    setInfo(newInfo);
-    send("UPDATE_INFO", { value: newInfo });
-    console.log('update_info')
+    try {
+      const newInfo = await getMintInfo();
+      if (!newInfo) {
+        throw new Error('not found');
+      }
+      console.log({newInfo});
+      setInfo(newInfo);
+      send("UPDATE_INFO", { value: newInfo });
+      console.log("update_info");
+    } catch (e) {
+      setInfo({ salePrice: '0', mintsLeft: 6969, maxSupply: 6969 });
+    }
   }, [getQueryContract, setInfo]);
   useEffect(() => {
     getPrice();
@@ -45,18 +50,27 @@ export const Disclaimer = ({ send }) => {
     </div>
   );
 
+  console.log(info, NETWORK_ID)
+
   if (info === undefined) {
     return <div className={styles.textLink}>...</div>;
   }
 
-  if (info?.salePrice === 0) {
-    return <Typist>{mintInfo}</Typist>;
+  if (info?.salePrice === '0') {
+    return (
+      <Typist>
+        {mintInfo}
+        <div className={styles.textLink}>
+          mint is not open yet. please follow our twitter for updates
+        </div>
+      </Typist>
+    );
   }
 
   return (
     <Typist onTypingDone={() => send("DISCLAIMER_TYPED")}>
       <div className={styles.textLink} key="mint">
-        {info?.salePrice.toNumber() === 0
+        {info?.salePrice === '0'
           ? "mint not opened yet"
           : "time to mint!"}
       </div>

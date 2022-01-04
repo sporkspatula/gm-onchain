@@ -3,9 +3,9 @@
   "version": "1.0.0",
   "license": "MIT",
   "scripts": {
-    "dev": "parcel index.html",
-    "build": "parcel build index.html --dist-dir ./public",
-    "clean": "rm -rf ./.parcel-cache ./dist"
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start"
   },
   "dependencies": {
     "@emotion/css": "^11.7.1",
@@ -13,9 +13,11 @@
     "@types/node": "^17.0.5",
     "@types/react-dom": "^17.0.11",
     "@xstate/react": "^1.6.3",
+    "@zoralabs/nft-hooks": "^0.8.1",
     "@zoralabs/simple-wallet-provider": "^0.1.1",
     "dotenv": "^10.0.0",
     "ethers": "^5.5.2",
+    "next": "^12.0.7",
     "parcel": "^2.0.1",
     "react": "^17.0.2",
     "react-dom": "^17.0.2",

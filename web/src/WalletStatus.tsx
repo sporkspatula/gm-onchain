@@ -10,8 +10,7 @@ import { formatEther } from "@ethersproject/units";
 import { Gm__factory } from "./typechain/factories/Gm__factory";
 import { TestBase__factory } from "./typechain/factories/TestBase__factory";
 import { BigNumber, ethers } from "ethers";
-
-const GM_ADDRESS = process.env.CONTRACT_ADDRESS;
+import { GM_CONTRACT } from "./env-vars";
 
 const ButtonPrompts = {
   shown: "mint",
@@ -40,10 +39,10 @@ export const WalletStatus = ({ state, send, count, info }: any) => {
       try {
         setError("");
         const signer = await library.getSigner();
-        const factory = new Gm__factory(signer).attach(GM_ADDRESS);
-        const baseContract = new TestBase__factory(signer).attach(GM_ADDRESS);
+        const factory = new Gm__factory(signer).attach(GM_CONTRACT);
+        const baseContract = new TestBase__factory(signer).attach(GM_CONTRACT);
         const mintTxn = await factory.mint(count, {
-          value: info.salePrice * count,
+          value: BigNumber.from(info.salePrice).mul(BigNumber.from(count)),
         });
         baseContract.on(
           "Transfer",
@@ -132,11 +131,11 @@ export const WalletStatus = ({ state, send, count, info }: any) => {
           your wallet has {formatEther(balance)} ETH
         </div>
         <div className={styles.textLink} key={count.toString()}>
-          you need {formatEther(info.salePrice.mul(BigNumber.from(count)))} ETH
+          you need {formatEther(BigNumber.from(info.salePrice).mul(BigNumber.from(count)))} ETH
           to mint {count.toString()} gms.
         </div>
         <div className={styles.textLink} key={`${balance.toString()}-${count}`}>
-          {info.salePrice.mul(BigNumber.from(count)).lt(balance)
+          {BigNumber.from(info.salePrice).mul(BigNumber.from(count)).lt(balance)
             ? "you have enough eth"
             : "you need more eth"}
         </div>
