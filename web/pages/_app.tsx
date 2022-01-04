@@ -13,13 +13,7 @@ export default function App({ Component, pageProps }: any) {
         dl {
           margin: 0;
         }
-        font-family: "Inter", "system-ui";
-
-        -webkit-font-smoothing: antialiased;
-
-        @supports (font-variation-settings: normal) {
-          font-family: "Inter var", "system-ui";
-        }
+        font-family: 'DM Mono', monospace;
       `}
     >
       <Web3ConfigProvider
@@ -30,7 +24,7 @@ export default function App({ Component, pageProps }: any) {
       >
         <NFTFetchConfiguration
           networkId={
-            process.env.NEXT_PUBLIC_NETWORK_ID === "4"
+            NETWORK_ID === "4"
               ? Networks.RINKEBY
               : Networks.MAINNET
           }

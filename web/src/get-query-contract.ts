@@ -27,10 +27,10 @@ export async function getTokenInfo(tokenId: string) {
 
 export function getQueryContract() {
   const provider = new ethers.providers.JsonRpcBatchProvider(
-    process.env.RPC_URL,
-    parseInt(process.env.NETWORK_ID || "4")
+    RPC_URL,
+    parseInt(NETWORK_ID || "4")
   );
-  return Gm__factory.connect(process.env.CONTRACT_ADDRESS, provider);
+  return Gm__factory.connect(GM_CONTRACT, provider);
 }
 
 export async function getMintInfo() {

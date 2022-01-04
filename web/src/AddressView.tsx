@@ -2,6 +2,9 @@ import { useENSAddress } from "@zoralabs/nft-hooks";
 
 
 export const sliceAddress = (address: string) => {
+  if (!address) {
+    return <>?</>;
+  }
   const showChars = 4;
   const PREFIX_ADDRESS = "0x";
   const addressFirst = address.slice(0, showChars + PREFIX_ADDRESS.length);

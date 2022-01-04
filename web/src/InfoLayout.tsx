@@ -1,7 +1,5 @@
 import { css } from "@emotion/css";
-
-const NETWORK_ID = process.env.NETWORK_ID;
-const CONTRACT_ADDRESS = process.env.CONTRACT_ADDRESS;
+import { CONTRACT_ADDRESS, NETWORK_ID } from "./env-vars";
 
 export const InfoLayout = ({ children }: any) => (
   <div

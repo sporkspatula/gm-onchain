@@ -8,14 +8,19 @@ import { NETWORK_ID } from "./env-vars";
 
 export const Disclaimer = ({ send }) => {
   const [info, setInfo] = useState<any>(undefined);
+  console.log({info})
   const getPrice = useCallback(async () => {
     try {
       const newInfo = await getMintInfo();
+      if (!newInfo) {
+        throw new Error('not found');
+      }
+      console.log({newInfo});
       setInfo(newInfo);
       send("UPDATE_INFO", { value: newInfo });
       console.log("update_info");
     } catch (e) {
-      setInfo({ salePrice: 0, mintsLeft: 6969, maxSupply: 6969 });
+      setInfo({ salePrice: '0', mintsLeft: 6969, maxSupply: 6969 });
     }
   }, [getQueryContract, setInfo]);
   useEffect(() => {
@@ -51,7 +56,7 @@ export const Disclaimer = ({ send }) => {
     return <div className={styles.textLink}>...</div>;
   }
 
-  if (info?.salePrice === 0) {
+  if (info?.salePrice === '0') {
     return (
       <Typist>
         {mintInfo}
@@ -65,7 +70,7 @@ export const Disclaimer = ({ send }) => {
   return (
     <Typist onTypingDone={() => send("DISCLAIMER_TYPED")}>
       <div className={styles.textLink} key="mint">
-        {info?.salePrice.toNumber() === 0
+        {info?.salePrice === '0'
           ? "mint not opened yet"
           : "time to mint!"}
       </div>

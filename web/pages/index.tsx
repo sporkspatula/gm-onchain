@@ -26,7 +26,7 @@ export const getStaticProps: GetStaticProps = async () => {
   const contractAddress = GM_CONTRACT;
   const tokens = await FetchStaticData.fetchZoraIndexerList(fetchAgent, {
     collectionAddresses: [contractAddress],
-    limit: 100,
+    limit: 40,
     offset: 0,
   });
 
