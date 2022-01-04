@@ -42,7 +42,7 @@ export const Disclaimer = ({ send }) => {
       <div className={styles.textLink}>
         each mint costs{" "}
         <strong>
-          {info?.salePrice && info.salePrice !== '0' ? formatEther(info.salePrice) : "0.069"}
+          {info?.salePrice && info.salePrice !== '0' ? formatEther(info.salePrice) : "0.042"}
         </strong>{" "}
         eth with a total supply of{" "}
         <strong>{info?.maxSupply.toString() || "?"}</strong> gms.
