@@ -1,7 +1,5 @@
 import { css } from "@emotion/css";
-
-const NETWORK_ID = process.env.NETWORK_ID;
-const CONTRACT_ADDRESS = process.env.CONTRACT_ADDRESS;
+import { CONTRACT_ADDRESS, NETWORK_ID } from "./env-vars";
 
 export const InfoLayout = ({ children }: any) => (
   <div
@@ -28,7 +26,7 @@ export const InfoLayout = ({ children }: any) => (
         grid-template-areas:
           "mint mint"
           "mint mint"
-          "footer footer";
+          "sidebar sidebar";
         li {
           text-align: right;
         }
@@ -36,7 +34,7 @@ export const InfoLayout = ({ children }: any) => (
       grid-template-rows: 4fr 1fr;
       grid-template-columns: 1fr 200px;
       grid-gap: 10px;
-      height: 100vh;
+      min-height: 100vh;
     `}
   >
     <div
@@ -91,6 +89,10 @@ export const InfoLayout = ({ children }: any) => (
     <footer
       className={css`
         grid-area: footer;
+        display: none;
+        @media only screen and (max-width: 600px) {
+          display: block;
+        }
       `}
     ></footer>
   </div>

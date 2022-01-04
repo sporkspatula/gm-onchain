@@ -10,8 +10,12 @@ import {GmRenderer} from "./GmRenderer.sol";
 import {Base64} from "base64-sol/base64.sol";
 
 /**
-
-ASCII ART HERE
+   __    ___ ___  
+ /'_ `\/' _ ` _ `\
+( (_) || ( ) ( ) |
+`\__  |(_) (_) (_)
+( )_) |           
+ \___/'  
 
  */
 contract Gm is ERC721Delegated {
