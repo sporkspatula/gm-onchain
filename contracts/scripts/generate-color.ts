@@ -97,7 +97,8 @@ function removeDiacritics (str: string) {
     ];
 
     for(var i=0; i<defaultDiacriticsRemovalMap.length; i++) {
-        str = str.replace(defaultDiacriticsRemovalMap[i].letters, defaultDiacriticsRemovalMap[i].base);
+        str = str.replace(defaultDiacriticsRemovalMap[i].letters, defaultDiacriticsRemovalMap[i].base)
+            .replace("’", "");
     }
     return str;
 }
@@ -114,45 +115,29 @@ async function main() {
 
     console.log(hexDump.length)
 
-    const chunk = Math.floor(hexDump.length / 100)
+    const chunk = Math.floor(hexDump.length / 111)
 
     console.log(chunk)
 
-    for (let j = 0; j < 100; j++){
+    for (let j = 0; j < 111; j++){
         toUse.push(hexDump[j * chunk])
     }
 
     console.log(toUse.length)
 
-
     const colors: Array<any> = []
 
-    for (let i = 0; i < toUse.length; i += 100) {
-        const tempArr = toUse.slice(i, i + 100);
-        const colorString = tempArr.join(",")
-        console.log(colorString)
-        const color = await axios.get(`https://api.color.pizza/v1/${colorString}`)
+    const colorString = toUse.join(",")
+    console.log(colorString)
+    const color = await axios.get(`https://api.color.pizza/v1/${colorString}`)
 
-        await delay(500)
-
-
-        if (color.data['colors'].length !== 100) {
-            throw Error('Not receiving correct return length')
-        }
-
-        for (let j = 0; j < color.data['colors'].length; j++) {
-            colors.push(color.data['colors'][j])
-        }
+    for (let j = 0; j < color.data['colors'].length; j++) {
+        colors.push(color.data['colors'][j])
     }
 
 
-
-
-
-
-
     let template = '';
-    for (let i = 0; i < 100; i++) {
+    for (let i = 0; i < 111; i++) {
         const hex = colors[i]['hex'];
         const name = colors[i]['name'];
         template += `

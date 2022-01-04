@@ -101,18 +101,17 @@ contract Gm is ERC721Delegated {
     function tokenURI(uint256 tokenId) public view returns (string memory) {
         string memory json;
         (bytes memory tokenData, bytes memory name, bytes memory bgColor, bytes memory fontColor, bytes memory filter) = renderer.svgRaw(
-            tokenId,
             mintSeeds[tokenId]
         );
 
         bytes memory attributes = abi.encodePacked('"attributes": [',
             '{"trait_type":"style","value":"',
             name,
-            '"},{"trait_type":"bgColor","value":"',
+            '"},{"trait_type":"background color","value":"',
             bgColor,
-            '"},{"trait_type":"fontColor","value":"',
+            '"},{"trait_type":"font color","value":"',
             fontColor,
-            '"},{"trait_type":"filter","value":"',
+            '"},{"trait_type":"effect","value":"',
             filter,
             '"}]');
 
@@ -120,7 +119,7 @@ contract Gm is ERC721Delegated {
             bytes(
                 string(
                     abi.encodePacked(
-                        '{"description": "gm onchain is a collection of 10,000 randomly generated, onchain ascii-art renditions of our favorite crypto phrase. enjoy.",',
+                        '{"description": "gm-onchain is a collection of 6969 randomly generated, onchain renderings of our favorite crypto phrase. enjoy.",',
                         '"title": "gm ',
                         StringsUpgradeable.toString(tokenId),
                         '", "image": "',
