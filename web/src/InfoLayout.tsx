@@ -28,7 +28,7 @@ export const InfoLayout = ({ children }: any) => (
         grid-template-areas:
           "mint mint"
           "mint mint"
-          "footer footer";
+          "sidebar sidebar";
         li {
           text-align: right;
         }
@@ -36,7 +36,7 @@ export const InfoLayout = ({ children }: any) => (
       grid-template-rows: 4fr 1fr;
       grid-template-columns: 1fr 200px;
       grid-gap: 10px;
-      height: 100vh;
+      min-height: 100vh;
     `}
   >
     <div
@@ -91,6 +91,10 @@ export const InfoLayout = ({ children }: any) => (
     <footer
       className={css`
         grid-area: footer;
+        display: none;
+        @media only screen and (max-width: 600px) {
+          display: block;
+        }
       `}
     ></footer>
   </div>
