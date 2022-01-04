@@ -81,7 +81,6 @@ contract GmRenderer {
         }
 
         return (_getColor(bgRand), _getColor(fontRand));
-
     }
 
     function svgRaw(bytes32 seed)
@@ -128,9 +127,6 @@ contract GmRenderer {
         view
         returns (bytes memory)
     {
-
-        //string memory hsl1 = string(abi.encodePacked('hsl(', StringsUpgradeable.toString(hsl.h1), ',', StringsUpgradeable.toString(hsl.s1), '%,', StringsUpgradeable.toString(hsl.l1), '%)'));
-        //string memory hsl2 = string(abi.encodePacked('hsl(', StringsUpgradeable.toString(hsl.h2), ',', StringsUpgradeable.toString(hsl.s2), '%,', StringsUpgradeable.toString(hsl.l2), '%)'));
 
         return
             abi.encodePacked(
