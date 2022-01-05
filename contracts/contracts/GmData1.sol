@@ -9,7 +9,7 @@ contract GmData1 is GmDataInterface {
         pure
         returns (GmDataSet memory data)
     {
-        // AUTOGEN:START
+    // AUTOGEN:START
 
     if (index == 0) {
       data.compressedImage = hex"b32949ad2851a8b055375057a8b455373634525748ce492c2eb6554f4a2c4e55b7b329292e48cc03a9303632565748a954b055373453b74bcfb5d1074bd90169a0197600";
@@ -311,7 +311,7 @@ contract GmData1 is GmDataInterface {
       data.imageName = "Georgi16";
     }
     
-// AUTOGEN:END
+    // AUTOGEN:END
         return data;
     }
 }

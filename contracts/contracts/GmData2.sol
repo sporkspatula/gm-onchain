@@ -11,7 +11,7 @@ contract GmData2 is GmDataInterface {
            GmDataSet memory data 
         )
     {
-        // AUTOGEN:START
+    // AUTOGEN:START
 
     if (index == 50) {
       data.compressedImage = hex"b32949ad2851a8b055375057a8b455373236525748ce492c2eb6554f4a2c4e55b7b329292e48cc03a93032b1505748a954b055373453b75353ae3030303076b11e6c0c1b7db08b471d3eea705a39dcd10027038f85781413234581c3c9b39918ef92c4a04d8893e470b2a5a897c607b7c3a99e54e81ee203923969935406aa38d407350aec00";
@@ -127,7 +127,7 @@ contract GmData2 is GmDataInterface {
       data.imageName = "Alpha";
     }
   
-// AUTOGEN:END
+    // AUTOGEN:END
         return data;
     }
 }

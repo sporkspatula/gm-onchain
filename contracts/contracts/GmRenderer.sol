@@ -29,6 +29,8 @@ contract GmRenderer {
         gmData2 = gmData2Address;
     }
 
+    /// @notice decompresses the GmDataSet
+    /// @param gmData
     function decompress(GmDataInterface.GmDataSet memory gmData)
         public
         pure
@@ -41,6 +43,8 @@ contract GmRenderer {
         return (gmData.imageName, inflated);
     }
 
+    /// @notice returns an svg filter
+    /// @param index, a random number derived from the seed
     function _getFilter(uint256 index) internal pure returns (bytes memory) {
         // 0 || 99 2%
         if (index == 0 || index == 99) {
@@ -81,6 +85,8 @@ contract GmRenderer {
         return "none";
     }
 
+    /// @notice returns a background color and font color
+    /// @param seed
     function _getColors(bytes32 seed)
         internal
         pure
@@ -99,6 +105,17 @@ contract GmRenderer {
         return (_getColor(bgRand), _getColor(fontRand));
     }
 
+    /// @notice executes string comparison against two strings
+    function strCompare(string memory a, string memory b) internal pure returns (bool) {
+        if(bytes(a).length != bytes(b).length) {
+            return false;
+        } else {
+            return keccak256(abi.encodePacked(a)) == keccak256(abi.encodePacked(b));
+        }
+    }
+
+    /// @notice returns the raw svg yielded by seed
+    /// @param seed
     function svgRaw(bytes32 seed)
         external
         view
@@ -110,11 +127,9 @@ contract GmRenderer {
             bytes memory
         )
     {
-        // first 24 bytes used to construct hsl
-        //Hsl memory hsl = _getHsl(seed)
-        uint32 filterRand = uint32(bytes4(seed << 65)) % 100;
+        uint32 style = uint32(bytes4(seed << 65)) % 69;
+        uint32 filterRand = uint32(bytes4(seed << 97)) % 100;
         bytes memory filter = _getFilter(filterRand);
-        uint32 style = uint32(bytes4(seed << 192)) % 69;
 
         (Color memory bgColor, Color memory fontColor) = _getColors(seed);
 
@@ -124,6 +139,10 @@ contract GmRenderer {
             (name, inner) = decompress(gmData1.getSvg(style));
         } else {
             (name, inner) = decompress(gmData2.getSvg(style));
+        }
+
+        if ((strCompare(string(name), "Hex")) || (strCompare(string(name), "Binary")) || (strCompare(string(name), "Morse")) || (strCompare(string(name), "Mnemonic"))){
+            filter = "none";
         }
 
         return (
@@ -139,6 +158,7 @@ contract GmRenderer {
         );
     }
 
+    /// @notice returns the svg filters
     function svgFilterDefs() private view returns (bytes memory) {
         return
             abi.encodePacked(
@@ -146,6 +166,10 @@ contract GmRenderer {
             );
     }
 
+    /// @notice returns the svg preamble
+    /// @param bgColor
+    /// @param fontColor
+    /// @param filter
     function svgPreambleString(
         bytes memory bgColor,
         bytes memory fontColor,
@@ -153,7 +177,7 @@ contract GmRenderer {
     ) private view returns (bytes memory) {
         return
             abi.encodePacked(
-                "<svg viewBox='0 0 640 640' xmlns='http://www.w3.org/2000/svg'><style> @font-face { font-family: CourierFont; src: url('",
+                "<svg viewBox='0 0 640 640' width='100%' height='100%' xmlns='http://www.w3.org/2000/svg'><style> @font-face { font-family: CourierFont; src: url('",
                 font.font(),
                 "') format('opentype'); }",
                 ".base{filter:url(#",
@@ -168,6 +192,8 @@ contract GmRenderer {
             );
     }
 
+    /// @notice returns the Color yielded by index
+    /// @param index, random number determined by seed
     function _getColor(uint32 index)
         internal
         pure

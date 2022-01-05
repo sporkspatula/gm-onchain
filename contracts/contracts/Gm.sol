@@ -61,6 +61,8 @@ contract Gm is ERC721Delegated {
         maxSupply = _maxSupply;
     }
 
+    /// @notice drinks coffee and updates the seed, only able to be called once
+    /// @param tokenId The token ID for the token
     function drinkCoffee(uint256 tokenId) public {
         require(_isApprovedOrOwner(msg.sender, tokenId), "Needs to own");
         require(!hasHadCoffee[tokenId], "Already had coffee");
@@ -68,17 +70,21 @@ contract Gm is ERC721Delegated {
         emit DrankCoffee(tokenId, msg.sender);
     }
 
-    // price = 0 == sale not started
+    /// @notice sets the sale price for Gm
+    /// @param newPrice, the new price to mint new gms
     function setSalePrice(uint256 newPrice) public onlyOwner {
         salePrice = newPrice;
     }
 
+    /// @notice returns number of mints left before sell out
     function mintsLeft() external view returns (uint256) {
         return maxSupply - currentTokenId.current();
     }
 
+    /// @notice mints (count) new gms
+    /// @param count number of gms to mint
     function mint(uint256 count) public payable {
-        require(currentTokenId.current() + count <= maxSupply, "Gm: sold out");
+        require(currentTokenId.current() + count <= maxSupply, "Gm: mint would exceed max supply");
         require(salePrice != 0, "Gm: sale not started");
         require(count <= 10, "Gm: cannot mint more than 10 in one transaction");
         require(msg.value == salePrice * count, "Gm: wrong sale price");
@@ -92,6 +98,8 @@ contract Gm is ERC721Delegated {
         }
     }
 
+    /// @notice burns the gm
+    /// @param tokenId
     function burn(uint256 tokenId) public {
         require(
             _isApprovedOrOwner(msg.sender, tokenId),
@@ -100,14 +108,14 @@ contract Gm is ERC721Delegated {
         _burn(tokenId);
     }
 
-    /**
-      @dev This withdraws ETH from the contract to the contract owner.
-     */
+    /// @notice withdraws the eth funds from the contract to the owner
     function withdraw() external onlyOwner {
         // No need for gas limit to trusted address.
         AddressUpgradeable.sendValue(payable(_owner()), address(this).balance);
     }
 
+    /// @notice returns the base64 encoded svg
+    /// @param data, bytes representing the svg
     function svgBase64Data(bytes memory data)
         internal
         pure
@@ -122,6 +130,8 @@ contract Gm is ERC721Delegated {
             );
     }
 
+    /// @notice returns the base64 data uri metadata json
+    /// @param tokenId
     function tokenURI(uint256 tokenId) public view returns (string memory) {
         string memory json;
         (bytes memory tokenData, bytes memory name, bytes memory bgColor, bytes memory fontColor, bytes memory filter) = renderer.svgRaw(
@@ -167,10 +177,14 @@ contract Gm is ERC721Delegated {
         return string(abi.encodePacked("data:application/json;base64,", json));
     }
 
+    /// @notice returns the seed for the tokenId
+    /// @param tokenId
     function seed(uint256 tokenId) external view returns (bytes32) {
         return mintSeeds[tokenId];
     }
 
+    /// @notice generates a pseudo random seed
+    /// @param tokenId
     function _generateSeed(uint256 tokenId) private view returns (bytes32) {
         return
             keccak256(abi.encodePacked(
