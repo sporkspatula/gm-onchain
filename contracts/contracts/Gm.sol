@@ -82,7 +82,7 @@ contract Gm is ERC721Delegated {
     }
 
     /// @notice mints (count) new gms
-    /// @param count number of gms to mint
+    /// @param count, the number of gms to mint
     function mint(uint256 count) public payable {
         require(currentTokenId.current() + count <= maxSupply, "Gm: mint would exceed max supply");
         require(salePrice != 0, "Gm: sale not started");
@@ -99,7 +99,7 @@ contract Gm is ERC721Delegated {
     }
 
     /// @notice burns the gm
-    /// @param tokenId
+    /// @param tokenId, the token id of be burned
     function burn(uint256 tokenId) public {
         require(
             _isApprovedOrOwner(msg.sender, tokenId),
@@ -131,7 +131,7 @@ contract Gm is ERC721Delegated {
     }
 
     /// @notice returns the base64 data uri metadata json
-    /// @param tokenId
+    /// @param tokenId, the token id of the gm
     function tokenURI(uint256 tokenId) public view returns (string memory) {
         string memory json;
         (bytes memory tokenData, bytes memory name, bytes memory bgColor, bytes memory fontColor, bytes memory filter) = renderer.svgRaw(
@@ -178,13 +178,13 @@ contract Gm is ERC721Delegated {
     }
 
     /// @notice returns the seed for the tokenId
-    /// @param tokenId
+    /// @param tokenId, the token id of the gm
     function seed(uint256 tokenId) external view returns (bytes32) {
         return mintSeeds[tokenId];
     }
 
     /// @notice generates a pseudo random seed
-    /// @param tokenId
+    /// @param tokenId, the token id of the gm
     function _generateSeed(uint256 tokenId) private view returns (bytes32) {
         return
             keccak256(abi.encodePacked(

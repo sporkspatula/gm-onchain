@@ -30,7 +30,7 @@ contract GmRenderer {
     }
 
     /// @notice decompresses the GmDataSet
-    /// @param gmData
+    /// @param gmData, compressed ascii svg data
     function decompress(GmDataInterface.GmDataSet memory gmData)
         public
         pure
@@ -86,7 +86,7 @@ contract GmRenderer {
     }
 
     /// @notice returns a background color and font color
-    /// @param seed
+    /// @param seed, pseudo random seed
     function _getColors(bytes32 seed)
         internal
         pure
@@ -106,6 +106,8 @@ contract GmRenderer {
     }
 
     /// @notice executes string comparison against two strings
+    /// @param a, first string
+    /// @param b, second string
     function strCompare(string memory a, string memory b) internal pure returns (bool) {
         if(bytes(a).length != bytes(b).length) {
             return false;
@@ -115,7 +117,7 @@ contract GmRenderer {
     }
 
     /// @notice returns the raw svg yielded by seed
-    /// @param seed
+    /// @param seed, pseudo random seed
     function svgRaw(bytes32 seed)
         external
         view
@@ -167,9 +169,9 @@ contract GmRenderer {
     }
 
     /// @notice returns the svg preamble
-    /// @param bgColor
-    /// @param fontColor
-    /// @param filter
+    /// @param bgColor, color of the background as hex string
+    /// @param fontColor, color of the font as hex string
+    /// @param filter, filter for the svg
     function svgPreambleString(
         bytes memory bgColor,
         bytes memory fontColor,
