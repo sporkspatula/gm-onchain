@@ -37,7 +37,9 @@ export default function FAQ({}: any) {
           There are 6969 total gms. <br/>
           69 unique rendering styles.  <br/>
           69 + 42 unique colors for backgorund and font <br/>
-          Some <b>rare</b> effects. <br/> <br/>
+          Some <b>rare</b> effects. <br/>
+        Mint Price: <b>0.042 eth</b><br/><br/>
+
 
 
           <h2><b>Nerdy Details</b></h2>
@@ -69,13 +71,17 @@ export default function FAQ({}: any) {
         <br/>
 
         <h2>Is there a roadmap?</h2>
-        No roadmap, no discord, just vibes.<br/>
-        However, if we choose to make new onchain rendered nfts, it is likely gm holders will get access.
+        No roadmap, no discord, just vibes. However, if we choose to make new onchain rendered nfts, it is likely gm holders will get access.
+        <br/>
         <br/>
 
         <h2>Shoutouts</h2>
         <ul>
-          <li></li>
+          <div className={css`li {padding:10;text-align:left;margin:10px 0;}`}>
+          <li><a href="https://twitter.com/dhof">Dom Hoffman</a> -- for all the onchain rendered nfts he's done and inspiration he has given the community.</li>
+          <li><a href="https://github.com/patorjk">Patorjk</a> -- for building a very useful js figlet <a href="https://github.com/patorjk/figlet.js">library</a> which we used to generate the gm ascii art</li>
+          <li><a href="https://github.com/meodai">meodai</a> -- for building a very useful color name <a href="https://github.com/meodai/color-names">repositoy</a> and api which we used to generate the sampled color names</li>
+          </div>
         </ul>
       </div>
     </>
