@@ -46,12 +46,8 @@ contract GmRenderer {
     /// @notice returns an svg filter
     /// @param index, a random number derived from the seed
     function _getFilter(uint256 index) internal pure returns (bytes memory) {
-        // 0 || 99 2%
-        if (index == 0 || index == 99) {
-            return "noise";
-        }
 
-        // 1 || 2 || 3 || 4 || 5 5%
+        // 1 || 2 || 3 || 4 || 5 -> noise 5%
         if (
             (index == 1) ||
             (index == 2) ||
@@ -59,10 +55,10 @@ contract GmRenderer {
             (index == 4) ||
             (index == 5)
         ) {
-            return "lit";
+            return "noise";
         }
 
-        // 7 || 8 || 98 3%
+        // 7 || 8 || 98 -> scribble 3%
         if ((index == 7) || (index == 8) || (index == 9)) {
             return "scribble";
         }
@@ -77,7 +73,7 @@ contract GmRenderer {
             return "glow";
         }
 
-        // 69
+        // 69 -> fractal 1%
         if (index == 69) {
             return "fractal";
         }
@@ -164,7 +160,7 @@ contract GmRenderer {
     function svgFilterDefs() private view returns (bytes memory) {
         return
             abi.encodePacked(
-                '<defs><filter id="fractal" filterUnits="objectBoundingBox" x="0%" y="0%" width="100%" height="100%" ><feTurbulence id="turbulence" type="fractalNoise" baseFrequency="0.03" numOctaves="1" ><animate attributeName="baseFrequency" values="0.01;0.4;0.01" dur="100s" repeatCount="indefinite" /></feTurbulence><feDisplacementMap in="SourceGraphic" scale="50"></feDisplacementMap></filter><filter id="morph"><feMorphology operator="dilate" radius="0"><animate attributeName="radius" values="0;5;0" dur="8s" repeatCount="indefinite" /></feMorphology></filter><filter id="glow" filterUnits="objectBoundingBox" x="0%" y="0%" width="100%" height="100%" ><feGaussianBlur stdDeviation="5" result="blur2" in="SourceGraphic" /><feMerge><feMergeNode in="blur2" /><feMergeNode in="SourceGraphic" /></feMerge></filter><filter id="noise"><feTurbulence baseFrequency="0.05"/><feColorMatrix type="hueRotate" values="0"><animate attributeName="values" from="0" to="360" dur="1s" repeatCount="indefinite"/></feColorMatrix><feColorMatrix type="matrix" values="0 0 0 0 1 0 0 0 0 0 0 0 0 0 0 1 0 0 0 0"/><feDisplacementMap in="SourceGraphic" scale="10"/></filter><filter id="none"><feOffset></feOffset></filter><filter id="scribble"><feTurbulence type="turbulence" baseFrequency="0.05" numOctaves="2" result="turbulence"/><feDisplacementMap in2="turbulence" in="SourceGraphic" scale="50" xChannelSelector="R" yChannelSelector="G"/></filter><filter id="tile" x="10" y="10" width="10%" height="10%"><feTile in="SourceGraphic" x="10" y="10" width="10" height="10" /><feTile/></filter><filter id = "lit" x="-30" y="-30" width="640" height="640"><feTurbulence type="turbulence" baseFrequency="0.01" numOctaves="2" result="turbulence"/><feComposite in="SourceGraphic" in2="specOut" operator="arithmetic" k1="0" k2="1" k3="1" k4="0"/></filter></defs>'
+                '<defs><filter id="fractal" filterUnits="objectBoundingBox" x="0%" y="0%" width="100%" height="100%" ><feTurbulence id="turbulence" type="fractalNoise" baseFrequency="0.03" numOctaves="1" ><animate attributeName="baseFrequency" values="0.01;0.4;0.01" dur="100s" repeatCount="indefinite" /></feTurbulence><feDisplacementMap in="SourceGraphic" scale="50"></feDisplacementMap></filter><filter id="morph"><feMorphology operator="dilate" radius="0"><animate attributeName="radius" values="0;5;0" dur="8s" repeatCount="indefinite" /></feMorphology></filter><filter id="glow" filterUnits="objectBoundingBox" x="0%" y="0%" width="100%" height="100%" ><feGaussianBlur stdDeviation="5" result="blur2" in="SourceGraphic" /><feMerge><feMergeNode in="blur2" /><feMergeNode in="SourceGraphic" /></feMerge></filter><filter id="noise"><feTurbulence baseFrequency="0.05"/><feColorMatrix type="hueRotate" values="0"><animate attributeName="values" from="0" to="360" dur="1s" repeatCount="indefinite"/></feColorMatrix><feColorMatrix type="matrix" values="0 0 0 0 1 0 0 0 0 0 0 0 0 0 0 1 0 0 0 0"/><feDisplacementMap in="SourceGraphic" scale="10"/></filter><filter id="none"><feOffset></feOffset></filter><filter id="scribble"><feTurbulence type="turbulence" baseFrequency="0.05" numOctaves="2" result="turbulence"/><feDisplacementMap in2="turbulence" in="SourceGraphic" scale="50" xChannelSelector="R" yChannelSelector="G"/></filter><filter id="tile" x="10" y="10" width="10%" height="10%"><feTile in="SourceGraphic" x="10" y="10" width="10" height="10" /><feTile/></filter></defs>'
             );
     }
 
