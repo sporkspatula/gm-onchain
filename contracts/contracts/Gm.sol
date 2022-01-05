@@ -128,6 +128,13 @@ contract Gm is ERC721Delegated {
             mintSeeds[tokenId]
         );
 
+        bytes memory caff;
+        if (hasHadCoffee[tokenId]) {
+            caff = "Yes";
+        } else {
+            caff = "No";
+        }
+
         bytes memory attributes = abi.encodePacked('"attributes": [',
             '{"trait_type":"style","value":"',
             name,
@@ -135,6 +142,8 @@ contract Gm is ERC721Delegated {
             bgColor,
             '"},{"trait_type":"font color","value":"',
             fontColor,
+            '"},{"trait_type":"caffeinated","value":"',
+            caff,
             '"},{"trait_type":"effect","value":"',
             filter,
             '"}]');
@@ -164,6 +173,14 @@ contract Gm is ERC721Delegated {
 
     function _generateSeed(uint256 tokenId) private view returns (bytes32) {
         return
-            keccak256(abi.encodePacked(block.timestamp, msg.sender, tokenId));
+            keccak256(abi.encodePacked(
+                            msg.sender,
+                            tx.gasprice,
+                            tokenId,
+                            block.number,
+                            block.timestamp,
+                            blockhash(block.number - 1)
+                    )
+            );
     }
 }
