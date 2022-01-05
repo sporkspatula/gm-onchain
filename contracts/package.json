@@ -13,6 +13,7 @@
     "test": "dotenv -e .env.test -- hardhat test"
   },
   "devDependencies": {
+    "@ethersproject/providers": "^5.5.1",
     "@nomiclabs/hardhat-waffle": "^2.0.1",
     "@types/chai": "^4.2.21",
     "@types/data-urls": "^2.0.1",

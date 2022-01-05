@@ -118,16 +118,16 @@ describe("Gm", () => {
         await gm.connect(otherAccount).mint(10, { value: salePrice.mul(BigNumber.from(10)) })
       }
 
-      await expect(gm.connect(otherAccount).mint(1, { value: salePrice })).eventually.rejectedWith("Gm: sold out");
-      await expect(gm.connect(otherAccount).mint(2, { value: salePrice.mul(BigNumber.from(2)) })).eventually.rejectedWith("Gm: sold out");
-      await expect(gm.connect(otherAccount).mint(3, { value: salePrice.mul(BigNumber.from(3)) })).eventually.rejectedWith("Gm: sold out");
-      await expect(gm.connect(otherAccount).mint(4, { value: salePrice.mul(BigNumber.from(4)) })).eventually.rejectedWith("Gm: sold out");
-      await expect(gm.connect(otherAccount).mint(5, { value: salePrice.mul(BigNumber.from(5)) })).eventually.rejectedWith("Gm: sold out");
-      await expect(gm.connect(otherAccount).mint(6, { value: salePrice.mul(BigNumber.from(6)) })).eventually.rejectedWith("Gm: sold out");
-      await expect(gm.connect(otherAccount).mint(7, { value: salePrice.mul(BigNumber.from(7)) })).eventually.rejectedWith("Gm: sold out");
-      await expect(gm.connect(otherAccount).mint(8, { value: salePrice.mul(BigNumber.from(8)) })).eventually.rejectedWith("Gm: sold out");
-      await expect(gm.connect(otherAccount).mint(9, { value: salePrice.mul(BigNumber.from(9)) })).eventually.rejectedWith("Gm: sold out");
-      await expect(gm.connect(otherAccount).mint(10, { value: salePrice.mul(BigNumber.from(10)) })).eventually.rejectedWith("Gm: sold out");
+      await expect(gm.connect(otherAccount).mint(1, { value: salePrice })).eventually.rejectedWith("Gm: mint would exceed max supply");
+      await expect(gm.connect(otherAccount).mint(2, { value: salePrice.mul(BigNumber.from(2)) })).eventually.rejectedWith("Gm: mint would exceed max supply");
+      await expect(gm.connect(otherAccount).mint(3, { value: salePrice.mul(BigNumber.from(3)) })).eventually.rejectedWith("Gm: mint would exceed max supply");
+      await expect(gm.connect(otherAccount).mint(4, { value: salePrice.mul(BigNumber.from(4)) })).eventually.rejectedWith("Gm: mint would exceed max supply");
+      await expect(gm.connect(otherAccount).mint(5, { value: salePrice.mul(BigNumber.from(5)) })).eventually.rejectedWith("Gm: mint would exceed max supply");
+      await expect(gm.connect(otherAccount).mint(6, { value: salePrice.mul(BigNumber.from(6)) })).eventually.rejectedWith("Gm: mint would exceed max supply");
+      await expect(gm.connect(otherAccount).mint(7, { value: salePrice.mul(BigNumber.from(7)) })).eventually.rejectedWith("Gm: mint would exceed max supply");
+      await expect(gm.connect(otherAccount).mint(8, { value: salePrice.mul(BigNumber.from(8)) })).eventually.rejectedWith("Gm: mint would exceed max supply");
+      await expect(gm.connect(otherAccount).mint(9, { value: salePrice.mul(BigNumber.from(9)) })).eventually.rejectedWith("Gm: mint would exceed max supply");
+      await expect(gm.connect(otherAccount).mint(10, { value: salePrice.mul(BigNumber.from(10)) })).eventually.rejectedWith("Gm: mint would exceed max supply");
 
     })
     
