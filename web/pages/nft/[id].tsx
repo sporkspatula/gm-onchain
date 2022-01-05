@@ -6,6 +6,8 @@ import { getTokenInfo } from "../../src/get-query-contract";
 import { AddressView } from "../../src/AddressView";
 
 export default function GM({ id, tokenInfo }: any) {
+  console.log({tokenInfo})
+
   return (
     <>
       <HeadInfo title="View your GM" description="GM" />
@@ -13,19 +15,21 @@ export default function GM({ id, tokenInfo }: any) {
         className={css`
           color: #f6f6f6;
           .dark {
-            opacity: 0.5;
+            opacity: 0.9;
           }
           .link-first {
             margin-top: 14px;
           }
           font-family: DM Mono;
           font-style: normal;
-          font-weight: 500;
-          font-size: 16px;
-          line-height: 32px;
+          font-weight: 400;
+          font-size: 20px;
+          line-height: 38px;
 
           /* identical to box height, or 200% */
           font-feature-settings: "zero" on;
+
+          margin: 5%;
 
           a {
             text-decoration: none;
@@ -33,8 +37,9 @@ export default function GM({ id, tokenInfo }: any) {
           }
         `}
       >
-        <div>GM #{id}</div>
-        <div className="dark"><AddressView address={tokenInfo.ownerAddress} /></div>
+        <h1>GM #{id}</h1>
+        <img src={tokenInfo.data.image} alt={`GM ${id}`} />
+        <div className="dark"><AddressView address={tokenInfo.owner} /></div>
         <div className="link-first">
           <a
             href={`https://${

@@ -25,12 +25,24 @@ export const RenderGm = ({ gmId }: { gmId: number }) => {
     return <div>...</div>;
   }
   return (
-    <img
+    <div
       className={css`
-        max-width: 20vw;
+        a {
+          color: inherit;
+          padding-top: 4px;
+        }
       `}
-      alt={`GM #${gmId}`}
-      src={gm.image}
-    />
+    >
+      <img
+        className={css`
+          max-width: 20vw;
+        `}
+        alt={`GM #${gmId}`}
+        src={gm.image}
+      />
+      <a href={`/nft/${gmId}`} target="_blank">
+        view GM
+      </a>
+    </div>
   );
 };
