@@ -5,12 +5,12 @@ import {InflateLib} from "./InflateLib.sol";
 import {GmDataInterface} from "./GmDataInterface.sol";
 import {StringsUpgradeable} from "@openzeppelin/contracts-upgradeable/utils/StringsUpgradeable.sol";
 
-interface ICorruptionsFont {
+interface ICourierFont {
     function font() external view returns (string memory);
 }
 
 contract GmRenderer {
-    ICorruptionsFont private immutable font;
+    ICourierFont private immutable font;
     GmDataInterface private immutable gmData1;
     GmDataInterface private immutable gmData2;
 
@@ -20,7 +20,7 @@ contract GmRenderer {
     }
 
     constructor(
-        ICorruptionsFont fontAddress,
+        ICourierFont fontAddress,
         GmDataInterface gmData1Address,
         GmDataInterface gmData2Address
     ) {
