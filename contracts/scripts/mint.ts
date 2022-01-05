@@ -26,7 +26,7 @@ async function mint() {
     //const gm = Gm__factory.connect("0x6293bbfEf55221C233b3de29bD5852fAF97e1C0E", wallet)
 
     for (let i = 0; i < 690; i++) {
-        await gm.mint(1, { value: "100" });
+        await gm.mint(10, { value: "1000" });
         console.log(`Minted ${i} * 1`);
     }
 }
