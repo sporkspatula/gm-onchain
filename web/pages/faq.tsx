@@ -108,7 +108,7 @@ export default function FAQ({}: any) {
           <ul>
             <li>
               <a href="https://twitter.com/dhof">Dom Hoffman</a> -- for all the
-              onchain rendered nfts he's done and inspiration he has given the
+              onchain rendered nfts he has done and inspiration he has given the
               community.
             </li>
             <li>
@@ -120,8 +120,12 @@ export default function FAQ({}: any) {
             <li>
               <a href="https://github.com/meodai">meodai</a> -- for building a
               very useful color name{" "}
-              <a href="https://github.com/meodai/color-names">repositoy</a> and
+              <a href="https://github.com/meodai/color-names">repository</a> and
               api which we used to generate the sampled color names
+            </li>
+            <li>
+              <a href="https://github.com/adlerjohn/inflate-sol">inflate-sol</a> -- awesome library
+              handling on-chain INFLATE algorithm to compress the text used for each GM.
             </li>
           </ul>
         </div>
