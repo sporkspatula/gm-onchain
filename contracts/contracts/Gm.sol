@@ -66,6 +66,7 @@ contract Gm is ERC721Delegated {
     function drinkCoffee(uint256 tokenId) public {
         require(_isApprovedOrOwner(msg.sender, tokenId), "Needs to own");
         require(!hasHadCoffee[tokenId], "Already had coffee");
+        hasHadCoffee[tokenId] = true;
         mintSeeds[tokenId] = _generateSeed(tokenId);
         emit DrankCoffee(tokenId, msg.sender);
     }
