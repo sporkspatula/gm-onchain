@@ -29,6 +29,10 @@ G:::::G        G::::GM::::::M    M:::::M    M::::::M
         GGGGGG   GGGGMMMMMMMM               MMMMMMMM
                                                     
  */
+
+/// @author twitter.com/brxckinridge
+/// @author twitter.com/isiain
+/// @notice gm
 contract Gm is ERC721Delegated {
     using CountersUpgradeable for CountersUpgradeable.Counter;
 
