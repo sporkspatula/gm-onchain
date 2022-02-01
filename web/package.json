@@ -1,7 +1,7 @@
 {
   "name": "gm-onchain-web",
   "version": "1.0.0",
-  "license": "MIT",
+  "license": "GPL-v3",
   "scripts": {
     "dev": "next dev",
     "build": "next build",

@@ -1,10 +1,10 @@
 {
-  "name": "",
+  "name": "gm-onchain-contracts",
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
   "author": "iain nash",
-  "license": "MIT",
+  "license": "GPL-v3",
   "private": false,
   "scripts": {
     "typechain": "hardhat typechain",
