@@ -10,3 +10,6 @@ The code is structured as:
 
 View the deployed site: https://gm.graphics/
 View the contract: https://etherscan.io/address/0x12c8630369977ee708c8e727d8e838f74d9420c5
+
+#### For the svg results:
+Copyright and related rights waived via [CC0](https://creativecommons.org/publicdomain/zero/1.0/).
