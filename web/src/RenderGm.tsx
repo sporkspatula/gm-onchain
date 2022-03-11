@@ -30,12 +30,14 @@ export const RenderGm = ({ gmId }: { gmId: number }) => {
         a {
           color: inherit;
           padding-top: 4px;
+          display: block;
         }
       `}
     >
       <img
         className={css`
           max-width: 20vw;
+          margin-top: 4px;
         `}
         alt={`GM #${gmId}`}
         src={gm.image}
