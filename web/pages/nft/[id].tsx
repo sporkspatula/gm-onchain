@@ -6,7 +6,7 @@ import { getTokenInfo } from "../../src/get-query-contract";
 import { AddressView } from "../../src/AddressView";
 
 export default function GM({ id, tokenInfo }: any) {
-  console.log({tokenInfo})
+  // console.log({tokenInfo})
 
   return (
     <>
@@ -58,6 +58,22 @@ export default function GM({ id, tokenInfo }: any) {
             target="_blank"
           >
             View on ZORA
+          </a>
+        </div>
+        <div>
+          <a
+            href={tokenInfo.data.image}
+            download={`gm-${id}.svg`}
+          >
+            Download SVG
+          </a>
+        </div>
+        <div>
+          <a
+            href={`data:application/json;base64,${Buffer.from(JSON.stringify(tokenInfo.data)).toString('base64')}`}
+            download={`gm-${id}-metadata.json`}
+          >
+            Download Metadata
           </a>
         </div>
       </div>
